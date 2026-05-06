@@ -877,6 +877,7 @@ body {
   display: flex;
   align-items: center;
   gap: var(--spacing-12);
+  min-width: 0;
 }
 
 .chevron-btn {
@@ -1223,6 +1224,7 @@ input.subscription-name:focus { outline: none; box-shadow: 0 0 0 2px var(--color
   display: flex;
   align-items: center;
   gap: var(--spacing-12);
+  min-width: 0;
 }
 
 .product-icon {
@@ -2361,11 +2363,16 @@ input.subscription-name:focus { outline: none; box-shadow: 0 0 0 2px var(--color
 }
 
 /* ============ RESPONSIVE ============ */
-/* ============ RESPONSIVE ============ */
 /* Table responsiveness uses a container query so it reacts to the centre
    column's actual width, not the viewport width.  This means the table
-   adapts correctly whether the panel is visible (narrow centre) or not. */
-@container (max-width: 900px) {
+   adapts correctly whether the panel is visible (narrow centre) or not.
+
+   Threshold = 1040px: the grid template columns sum to ~880-892px plus
+   gaps (~80-112px) plus row padding (~32-48px) = ~1008px minimum width
+   the row needs before its columns squeeze or overflow. The container
+   query trips ~32px above that floor so the wrap layout takes over
+   *before* anything visually breaks at the boundary. */
+@container (max-width: 1040px) {
   .table-header { display: none; }
 
   .subscription-row,
