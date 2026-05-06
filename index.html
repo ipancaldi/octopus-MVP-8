@@ -1,0 +1,4221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Subscription Management v3 — Disguise Octopus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ DISGUISE OCTOPUS UI KIT TOKENS ============ */
+:root {
+  /* Base */
+  --color-base-white: #FFFFFF;
+  --color-base-black: #000000;
+
+  /* Gray */
+  --color-gray-25:  #FCFCFD;
+  --color-gray-50:  #F9FAFB;
+  --color-gray-100: #F2F4F7;
+  --color-gray-200: #EAECF0;
+  --color-gray-300: #D0D5DD;
+  --color-gray-400: #98A2B3;
+  --color-gray-500: #667085;
+  --color-gray-600: #475467;
+  --color-gray-700: #344054;
+  --color-gray-800: #1D2939;
+  --color-gray-900: #101828;
+
+  /* Accents */
+  --color-accent-magenta: #FF98F4;
+  --color-accent-pink-light: #FFDDF8;
+  --color-accent-green:   #6BFFDC;
+  --color-accent-purple:  #8200E8;
+  --color-accent-yellow:  #FEFF34;
+  --color-accent-orange:  #FF8559;
+  --color-accent-warning: #FFE6DD;
+
+  /* Semantic tokens (from design reference) */
+  --color-card-stroke:        #D0D5DD;
+  --color-card-bg:            #F8FAFC;
+  --color-special-card-bg:    #E1FFF8;
+  --color-subscription-row-bg:#EAECF0;
+  --color-product-row-bg:     #F2F4F7;
+  --color-header-bg:          #F9FAFB;
+  --color-button-stroke:      #D0D5DD;
+
+  /* Member avatar colors */
+  --avatar-purple: #7C3AED;
+  --avatar-blue:   #3B82F6;
+  --avatar-peach:  #FDA480;
+  --avatar-green:  #10B981;
+
+  /* Derived tints */
+  --tint-magenta-soft: #FDF1FC;
+  --tint-magenta-softer: #FBE7F9;
+  --tint-green-soft: #E8FFF7;
+  --tint-red-soft: #FCE9E6;
+  --tint-red-softer: #FDEEEC;
+  --tint-orange-soft: #FEEDDE;
+
+  /* Typography */
+  --font-family: 'Manrope', 'Aeonik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-display: 32px;
+  --font-size-h1:      24px;
+  --font-size-h2:      20px;
+  --font-size-h3:      18px;
+  --font-size-body-lg: 16px;
+  --font-size-body:    14px;
+  --font-size-caption: 12px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Spacing */
+  --spacing-2:  2px;
+  --spacing-4:  4px;
+  --spacing-8:  8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.18);
+}
+
+/* ============ RESET ============ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input { font: inherit; }
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-900);
+  background: var(--color-base-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+  line-height: 1.45;
+}
+
+/* ============ APP SHELL ============ */
+.app-shell {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ============ LEFT NAV ============ */
+.app-nav {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--color-base-white);
+  border-right: 1px solid var(--color-gray-200);
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-16) var(--spacing-12);
+  gap: var(--spacing-4);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: width 0.25s ease;
+}
+
+.nav-top {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-8) var(--spacing-8) var(--spacing-16);
+  transition: flex-direction 0.25s ease, padding 0.25s ease, gap 0.25s ease;
+}
+.nav-collapse-btn {
+  width: 32px; height: 32px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-700);
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-collapse-btn:hover {
+  background: var(--color-gray-50);
+  color: var(--color-gray-900);
+}
+/* Toggle chevrons — show "collapse" arrow by default, "expand" arrow when collapsed */
+.nav-toggle-chevron-expand { display: none; }
+
+.nav-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+.nav-logo-mark {
+  flex-shrink: 0;
+  color: var(--color-base-black);
+}
+.nav-logo-text {
+  font-family: 'Aeonik', 'Manrope', var(--font-family);
+  font-size: 18px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
+  color: var(--color-gray-900);
+  white-space: nowrap;
+}
+
+/* ============ COLLAPSED NAV STATE ============ */
+.app-shell.nav-collapsed .app-nav { width: 72px; }
+.app-shell.nav-collapsed .app-nav .nav-top {
+  flex-direction: column-reverse;
+  gap: var(--spacing-12);
+  padding: var(--spacing-8) 0 var(--spacing-12);
+  align-items: center;
+}
+.app-shell.nav-collapsed .app-nav .nav-logo-text { display: none; }
+.app-shell.nav-collapsed .app-nav .nav-toggle-chevron-collapse { display: none; }
+.app-shell.nav-collapsed .app-nav .nav-toggle-chevron-expand { display: inline; }
+
+.app-shell.nav-collapsed .app-nav .nav-item {
+  justify-content: center;
+  padding: 10px;
+  gap: 0;
+  position: relative;
+}
+.app-shell.nav-collapsed .app-nav .nav-label { display: none; }
+.app-shell.nav-collapsed .app-nav .nav-section-label { display: none; }
+.app-shell.nav-collapsed .app-nav .nav-divider { margin: var(--spacing-8) 0; }
+
+.app-shell.nav-collapsed .app-nav .nav-storage {
+  padding: var(--spacing-8);
+  align-items: center;
+}
+.app-shell.nav-collapsed .app-nav .nav-storage-header {
+  justify-content: center;
+  gap: 0;
+}
+.app-shell.nav-collapsed .app-nav .nav-storage-header span,
+.app-shell.nav-collapsed .app-nav .nav-storage-bar,
+.app-shell.nav-collapsed .app-nav .nav-storage-text {
+  display: none;
+}
+.app-shell.nav-collapsed .app-nav .nav-notification-dot {
+  position: absolute;
+  top: 6px;
+  right: 14px;
+  margin: 0;
+}
+
+.nav-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: 10px var(--spacing-12);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-900);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+  position: relative;
+}
+.nav-item:hover {
+  background: var(--color-gray-50);
+}
+.nav-item.active {
+  background: var(--color-accent-pink-light);
+  color: var(--color-accent-magenta);
+}
+.nav-item.active svg { color: var(--color-accent-magenta); }
+.nav-item.disabled {
+  color: var(--color-gray-300);
+  cursor: not-allowed;
+}
+.nav-item.disabled svg { color: var(--color-gray-300); }
+.nav-item svg {
+  color: var(--color-gray-700);
+  flex-shrink: 0;
+}
+
+.nav-divider {
+  height: 1px;
+  background: var(--color-gray-200);
+  margin: var(--spacing-12) var(--spacing-4);
+}
+
+.nav-section-label {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-400);
+  padding: var(--spacing-12) var(--spacing-12) var(--spacing-4);
+  letter-spacing: 0.02em;
+}
+
+.nav-spacer { flex: 1 1 auto; min-height: var(--spacing-24); }
+
+.nav-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  padding-top: var(--spacing-8);
+  border-top: 1px solid var(--color-gray-100);
+  margin-top: var(--spacing-8);
+}
+.nav-notification-dot {
+  width: 8px; height: 8px;
+  background: #F43F5E;
+  border-radius: 50%;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.nav-storage {
+  padding: var(--spacing-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+.nav-storage-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-900);
+}
+.nav-storage-header svg { color: var(--color-gray-700); flex-shrink: 0; }
+.nav-storage-bar {
+  height: 4px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.nav-storage-fill {
+  height: 100%;
+  background: var(--color-gray-700);
+  border-radius: var(--radius-pill);
+}
+.nav-storage-text {
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-600);
+}
+
+/* Hide nav on small screens to keep the page usable */
+@media (max-width: 768px) {
+  .app-nav { display: none; }
+}
+
+/* ============ LAYOUT ============ */
+.page {
+  max-width: 1600px;
+  margin: 0 auto;
+  /* No top padding — top-nav sits flush at the very top of the content column.
+     Right padding deliberately absent too; the panel extends to the right edge
+     via its own margin. */
+  padding: 0 0 var(--spacing-48);
+}
+
+.page-header {
+  margin-bottom: var(--spacing-32);
+}
+
+/* ============ TOP NAV ============ */
+.top-nav {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: var(--color-base-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  gap: var(--spacing-4);
+  padding: 0 var(--spacing-24);
+  /* Natural block element — not sticky, not floating. */
+}
+
+.top-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-500);
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.top-nav-btn:hover {
+  background: var(--color-gray-100);
+  color: var(--color-gray-900);
+}
+
+.top-nav-cart-wrap {
+  position: relative;
+}
+.top-nav-badge {
+  position: absolute;
+  top: 3px; right: 3px;
+  width: 16px; height: 16px;
+  background: var(--color-accent-magenta);
+  border-radius: 50%;
+  display: flex;
+  align-items: center; justify-content: center;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.top-nav-workspace {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 34px; height: 26px;
+  background: var(--color-accent-purple);
+  border-radius: var(--radius-md);
+  color: var(--color-base-white);
+  font-size: 13px;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  border: none;
+}
+.top-nav-workspace:hover { opacity: 0.85; }
+
+.top-nav-sep {
+  width: 1px; height: 24px;
+  background: var(--color-gray-200);
+  flex-shrink: 0;
+  margin: 0 var(--spacing-4);
+}
+
+.top-nav-user {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  color: var(--color-gray-500);
+  border-radius: var(--radius-sm);
+  padding: 4px var(--spacing-8) 4px var(--spacing-4);
+  transition: background 0.15s, color 0.15s;
+  cursor: pointer;
+}
+.top-nav-user:hover {
+  background: var(--color-gray-100);
+  color: var(--color-gray-900);
+}
+
+/* ============ PAGE GRID ============ */
+/* top-nav is col-1 row-1 (64px) → spans only the centre column, stops at the panel
+   main-column is col-1 row-2 → fills remaining centre height
+   side-panel is col-2 rows 1–3 → full-height right column from the very top */
+.page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-rows: 64px auto;
+  column-gap: 0;
+  align-items: start;
+}
+.top-nav     { grid-column: 1; grid-row: 1; }
+.main-column {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+  container-type: inline-size;
+  padding: var(--spacing-32) var(--spacing-24) 0;
+}
+.side-panel  { grid-column: 2; grid-row: 1 / 3; }
+
+/* When the panel is closed: collapse the right column so the centre expands */
+.page-grid.panel-hidden {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* ≤ 768 px (mobile): single column, panel stacks below */
+@media (max-width: 768px) {
+  .page-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+  .top-nav, .main-column {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .side-panel {
+    grid-column: 1;
+    grid-row: auto;
+    position: static;
+    height: auto;
+    border-left: none;
+    border-top: 1px solid var(--color-gray-200);
+  }
+}
+
+/* ============ SIDE PANEL ============ */
+.side-panel {
+  /* Full-height sticky column — background fills from top to bottom */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--color-card-bg);   /* #F8FAFC */
+  border-left: 1px solid var(--color-gray-200);
+  /* Internal padding replaces individual element offsets */
+  padding: var(--spacing-32) var(--spacing-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  /* Scrollbar styling — subtle */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-300) transparent;
+}
+.side-panel::-webkit-scrollbar { width: 4px; }
+.side-panel::-webkit-scrollbar-track { background: transparent; }
+.side-panel::-webkit-scrollbar-thumb { background: var(--color-gray-300); border-radius: 2px; }
+
+/* In single-column mode, panel is a normal block at natural height */
+.side-panel.hidden { display: none; }
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+}
+.panel-name {
+  font-family: 'Aeonik', 'Manrope', var(--font-family);
+  font-size: 22px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-900);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.panel-close {
+  width: 32px; height: 32px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-700);
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.panel-close:hover { background: var(--color-gray-100); }
+
+.panel-section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gray-500);
+}
+.panel-section-label svg { color: var(--color-gray-500); }
+
+.panel-card {
+  background: var(--color-base-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+  padding: var(--spacing-4) 0;
+  min-height: 36px;
+}
+.panel-row-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  font-size: var(--font-size-body);
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-medium);
+}
+.panel-row-label svg { color: var(--color-gray-500); flex-shrink: 0; }
+.panel-row-value {
+  font-size: var(--font-size-body);
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+}
+
+.panel-divider {
+  height: 1px;
+  background: var(--color-gray-200);
+  margin: var(--spacing-4) 0;
+}
+
+.panel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  padding-top: var(--spacing-4);
+}
+.panel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  width: 100%;
+  padding: var(--spacing-12) var(--spacing-16);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.2s;
+}
+.panel-btn-primary {
+  background: var(--color-accent-magenta);
+  color: var(--color-gray-900);
+  box-shadow: var(--shadow-sm);
+}
+.panel-btn-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.panel-btn-dark {
+  background: var(--color-gray-900);
+  color: var(--color-base-white);
+  box-shadow: var(--shadow-sm);
+}
+.panel-btn-dark:hover {
+  background: var(--color-gray-800);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.panel-btn-secondary {
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+  border: 1px solid var(--color-gray-200);
+}
+.panel-btn-secondary:hover {
+  background: var(--color-gray-200);
+  color: var(--color-gray-900);
+}
+
+/* Auto-renew dropdown control inside the panel */
+.panel-renew-select {
+  position: relative;
+}
+.panel-renew-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-4) var(--spacing-8);
+  background: var(--color-base-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  min-width: 110px;
+  justify-content: space-between;
+  transition: box-shadow 0.15s, background 0.15s, border-color 0.15s, padding 0.15s;
+}
+.panel-renew-trigger:hover { box-shadow: var(--shadow-sm); }
+.panel-renew-trigger.open {
+  box-shadow: 0 0 0 2px var(--color-accent-magenta);
+}
+.panel-renew-trigger .chevron {
+  color: var(--color-gray-500);
+  transition: transform 0.2s, opacity 0.15s;
+}
+.panel-renew-trigger.open .chevron { transform: rotate(180deg); }
+
+/* View-mode: read-only — looks like a value label, not a control */
+.panel-renew-trigger.readonly {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  cursor: default;
+  padding: 0;
+  min-width: 0;
+}
+.panel-renew-trigger.readonly:hover { box-shadow: none; }
+.panel-renew-trigger.readonly .chevron {
+  opacity: 0;
+  width: 0;
+  pointer-events: none;
+}
+
+.panel-renew-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 140px;
+  background: var(--color-base-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-4);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.18s, transform 0.18s;
+}
+.panel-renew-dropdown.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.panel-renew-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-body);
+  color: var(--color-gray-900);
+  text-align: left;
+  transition: background 0.15s;
+}
+.panel-renew-option:hover { background: var(--color-gray-50); }
+.panel-renew-option.selected { background: var(--color-gray-100); }
+.panel-renew-option .check {
+  color: var(--color-accent-magenta);
+  opacity: 0;
+}
+.panel-renew-option.selected .check { opacity: 1; }
+
+/* "Latest Invoice" footer link row */
+.panel-latest-invoice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--spacing-4);
+}
+.panel-latest-invoice-title {
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+}
+.panel-latest-invoice-link {
+  font-size: var(--font-size-body);
+  color: var(--color-gray-700);
+  text-decoration: underline;
+  font-weight: var(--font-weight-medium);
+}
+.panel-latest-invoice-link:hover { color: var(--color-gray-900); }
+
+/* Breadcrumb title */
+.page-breadcrumb {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-8);
+  margin-bottom: var(--spacing-24);
+  flex-wrap: wrap;
+}
+.page-breadcrumb-root,
+.page-breadcrumb-sep,
+.page-breadcrumb-current {
+  font-family: 'Aeonik', 'Manrope', var(--font-family);
+  font-size: 30px;
+  font-weight: 400; /* Regular */
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.page-breadcrumb-root {
+  color: var(--color-gray-900);
+  opacity: 0.35;
+}
+.page-breadcrumb-sep {
+  color: var(--color-gray-700);
+  opacity: 0.35;
+}
+.page-breadcrumb-current {
+  color: var(--color-gray-400);
+}
+
+/* Filter chips — inherit assignee-chip style; auto-sized, not full-width */
+.filter-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-wrap: wrap;
+}
+.filter-chip {
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+@container (max-width: 900px) {
+  .filter-chips { gap: var(--spacing-4); }
+}
+@media (max-width: 560px) {
+  .page-breadcrumb-root,
+  .page-breadcrumb-sep,
+  .page-breadcrumb-current { font-size: 20px; }
+}
+
+.mode-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-pill);
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.25s ease;
+}
+.mode-indicator.edit {
+  background: var(--color-accent-magenta);
+  color: var(--color-gray-900);
+}
+.mode-indicator .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-gray-400);
+}
+.mode-indicator.edit .dot {
+  background: var(--color-gray-900);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.12);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ============ TABLE HEADER ============ */
+.table-header {
+  display: grid;
+  grid-template-columns: minmax(260px, 2fr) 140px 160px 140px 140px 40px;
+  gap: var(--spacing-16);
+  align-items: center;
+  padding: var(--spacing-12) var(--spacing-24);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-500);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--spacing-12);
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+/* ============ SUBSCRIPTION CARD ============ */
+.subscription {
+  background: var(--tint-magenta-soft);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--spacing-24);
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease, background 0.3s ease;
+  position: relative;
+}
+
+.subscription.edit-mode {
+  border: 1.5px dashed var(--color-gray-700);
+  background: var(--tint-magenta-soft);
+}
+
+.subscription.secondary {
+  background: var(--color-gray-100);
+}
+.subscription.secondary .subscription-row {
+  grid-template-columns: minmax(260px, 2fr) 140px 160px 140px 140px 40px;
+}
+
+.subscription-row {
+  display: grid;
+  grid-template-columns: minmax(260px, 2fr) 140px 160px 140px 140px 40px;
+  gap: var(--spacing-16);
+  align-items: center;
+  padding: var(--spacing-16) var(--spacing-24);
+  position: relative;
+}
+
+.subscription-title-block {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.chevron-btn {
+  width: 28px; height: 28px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-700);
+  transition: background 0.2s, transform 0.25s ease;
+  transform: rotate(-90deg); /* closed = right */
+}
+.chevron-btn:hover { background: rgba(0,0,0,0.05); }
+.chevron-btn.open { transform: rotate(0deg); /* open = down */ }
+
+.subscription-name {
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  line-height: 1.25;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s, box-shadow 0.2s, padding 0.2s;
+}
+/* Input variant used in edit mode */
+input.subscription-name {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  border: none;
+  background: var(--color-base-white);
+  box-shadow: 0 0 0 2px var(--color-accent-magenta), var(--shadow-sm);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  caret-color: var(--color-accent-magenta);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  letter-spacing: -0.01em;
+}
+input.subscription-name::placeholder { color: var(--color-gray-400); font-weight: var(--font-weight-regular); }
+input.subscription-name:focus { outline: none; box-shadow: 0 0 0 2px var(--color-accent-magenta), var(--shadow-md); }
+.subscription-name.editing {
+  background: var(--color-base-white);
+  box-shadow: 0 0 0 2px var(--color-accent-magenta), var(--shadow-sm);
+  padding: 2px 8px;
+  margin: -2px -8px;
+  cursor: text;
+  caret-color: var(--color-accent-magenta);
+}
+.subscription-meta {
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-600);
+  margin-top: 2px;
+}
+.subscription-meta strong {
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-semibold);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 var(--spacing-12);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1;
+}
+.status-pill.active { background: var(--color-accent-green); color: var(--color-gray-900); }
+.status-pill.expired { background: var(--color-accent-magenta); color: var(--color-gray-900); }
+.status-pill.expiring { background: #EADDFE; color: var(--color-accent-purple); }
+.status-pill.pending { background: var(--tint-orange-soft); color: #B54708; }
+
+.days-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font-size: var(--font-size-body);
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-medium);
+}
+.days-text svg { color: var(--color-gray-500); flex-shrink: 0; }
+
+/* Auto-renew icon and toggle */
+.renew-icon {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  color: var(--color-gray-600);
+  width: 32px; height: 32px;
+  position: relative;
+  transition: color 0.2s;
+}
+.renew-icon.disabled {
+  color: var(--color-gray-400);
+}
+.renew-icon.disabled::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 18%;
+  right: 18%;
+  height: 2px;
+  background: var(--color-gray-500);
+  transform: rotate(-45deg);
+  transform-origin: center;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.toggle {
+  position: relative;
+  width: 44px; height: 24px;
+  background: var(--color-gray-300);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  background: var(--color-base-white);
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+  box-shadow: var(--shadow-sm);
+}
+.toggle.on {
+  background: var(--color-accent-magenta);
+}
+.toggle.on::after {
+  transform: translateX(20px);
+}
+
+.auto-renew-edit-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+.auto-renew-label {
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.005em;
+}
+
+/* Update button */
+.update-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: var(--color-base-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+.update-btn:hover {
+  background: var(--color-accent-green);
+  border-color: var(--color-accent-green);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.update-btn svg { color: var(--color-accent-green); transition: color 0.2s; }
+.update-btn:hover svg { color: var(--color-gray-900); }
+
+/* Kebab menu */
+.kebab-wrap {
+  position: relative;
+}
+.subscription.edit-mode .kebab-wrap {
+  display: none;
+}
+.kebab-btn {
+  width: 32px; height: 32px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-700);
+  transition: background 0.2s;
+}
+.kebab-btn:hover { background: rgba(0,0,0,0.08); }
+
+/* Menu dropdown */
+.menu-dropdown {
+  position: absolute;
+  top: 56px;
+  right: 16px;
+  background: var(--color-base-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-4);
+  z-index: 100;
+  min-width: 200px;
+  border: 1px solid var(--color-gray-200);
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.menu-dropdown.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-body);
+  color: var(--color-gray-900);
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s;
+}
+.menu-item:hover {
+  background: var(--color-gray-50);
+}
+.menu-item.primary {
+  background: var(--color-accent-magenta);
+}
+.menu-item.primary:hover {
+  background: var(--color-accent-magenta);
+  filter: brightness(0.95);
+}
+
+/* ============ PRODUCTS CONTAINER ============ */
+.products {
+  padding: 0 var(--spacing-16) var(--spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  transition: gap 0.3s ease;
+}
+.subscription.edit-mode .products {
+  gap: 32px;
+  padding-top: 96px;
+}
+
+#newlyAddedList, #existingList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+  transition: gap 0.3s ease;
+}
+.subscription.edit-mode #newlyAddedList,
+.subscription.edit-mode #existingList {
+  gap: 32px;
+}
+
+.section-title {
+  display: none;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  padding: var(--spacing-8) var(--spacing-8) var(--spacing-4);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.subscription.edit-mode #newlyAddedLabel.has-items,
+.subscription.edit-mode #existingLabel.has-items {
+  display: block;
+}
+
+.section-divider {
+  display: none;
+  height: 1px;
+  background: var(--color-gray-200);
+  margin: 0 var(--spacing-8);
+}
+.subscription.edit-mode .section-divider.has-newly-added {
+  display: block;
+}
+
+/* ============ PRODUCT CARD ============ */
+.product {
+  background: var(--color-product-row-bg);
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 0 1px var(--color-card-stroke);
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+.subscription.edit-mode .product {
+  border: 1.5px dashed var(--color-gray-700);
+  background: var(--color-card-bg);
+  box-shadow: none;
+}
+.product.newly-added {
+  background: var(--color-base-white);
+}
+
+.product-row {
+  display: grid;
+  grid-template-columns: 40px 32px minmax(200px, 2fr) 140px 160px 140px 140px 40px;
+  gap: var(--spacing-12);
+  align-items: center;
+  padding: 20px var(--spacing-16);
+}
+.subscription:not(.edit-mode) .product-row {
+  grid-template-columns: 32px minmax(200px, 2fr) 140px 160px 140px 140px 40px;
+}
+
+.product-checkbox { display: none; }
+.subscription.edit-mode .product-checkbox { display: flex; }
+
+.checkbox {
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  background: var(--color-base-white);
+  display: flex;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+.checkbox:hover {
+  border-color: var(--color-accent-magenta);
+}
+.checkbox.checked {
+  background: var(--color-accent-magenta);
+  border-color: var(--color-accent-magenta);
+}
+.checkbox.checked::after {
+  content: '';
+  width: 10px; height: 6px;
+  border-left: 2px solid var(--color-gray-900);
+  border-bottom: 2px solid var(--color-gray-900);
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.product-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.product-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.product-img {
+  width: 100%; height: 100%;
+  display: block;
+  object-fit: cover;
+}
+.product-img.sm { border-radius: var(--radius-sm); }
+
+.product-name {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  line-height: 1.25;
+}
+.product-count {
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-600);
+  margin-top: 2px;
+}
+.product-count strong {
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-semibold);
+}
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent-green);
+  border: 1px solid var(--color-gray-300);
+  display: inline-block;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* Product body (expanded) */
+.product-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, overflow 0s 0s;
+}
+.product.open .product-body {
+  max-height: 1200px;
+  overflow: visible;
+  transition: max-height 0.35s ease, overflow 0s 0.35s;
+}
+.product-body-inner {
+  padding: 0 var(--spacing-16) var(--spacing-16);
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+/* Edit-mode license control bar — Remove All Selected + Add License/s sit at the right edge */
+.license-control {
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-12);
+  padding: var(--spacing-8) var(--spacing-12);
+}
+.subscription.edit-mode .license-control { display: flex; }
+
+/* Per-product Remove All Selected button — disabled when no rows selected */
+.btn-remove-selected {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: var(--color-base-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  transition: background 0.15s, border-color 0.15s, color 0.15s, opacity 0.15s, transform 0.15s;
+  cursor: pointer;
+}
+.btn-remove-selected:not(:disabled):hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+  color: var(--color-gray-900);
+  transform: translateY(-1px);
+}
+.btn-remove-selected:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-remove-selected svg { color: var(--color-gray-500); }
+
+.license-control-label {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.counter {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-base-white);
+  box-shadow: var(--shadow-sm);
+}
+.counter-btn {
+  width: 32px; height: 32px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  color: var(--color-gray-700);
+  transition: background 0.15s, color 0.15s;
+}
+.counter-btn:hover:not(:disabled) {
+  background: var(--color-gray-100);
+  color: var(--color-gray-900);
+}
+.counter-btn:focus-visible {
+  outline: 2px solid var(--color-accent-magenta);
+  outline-offset: -2px;
+}
+.counter-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  color: var(--color-gray-400);
+}
+.counter-value {
+  min-width: 36px;
+  text-align: center;
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  border-left: 1px solid var(--color-gray-200);
+  border-right: 1px solid var(--color-gray-200);
+  padding: 0 var(--spacing-8);
+  height: 32px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  background: var(--color-base-white);
+  color: var(--color-gray-900);
+}
+
+/* License row — aligned with the main table columns */
+.license-row {
+  display: grid;
+  grid-template-columns: 40px 32px minmax(200px, 2fr) 140px 160px 140px 140px 40px;
+  gap: var(--spacing-12);
+  align-items: center;
+  padding: var(--spacing-8) var(--spacing-12);
+  background: var(--color-base-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-100);
+  transition: background 0.2s;
+}
+.license-row:hover { background: var(--color-gray-25); }
+.subscription:not(.edit-mode) .license-row {
+  grid-template-columns: 32px minmax(200px, 2fr) 140px 160px 140px 140px 40px;
+}
+.subscription.edit-mode .license-row {
+  /* checkbox: 20px (exact size of the element)
+     spacer:   4px  (minimal alignment stub)
+     identity: 2.5fr (stretches to fill)
+     remaining cols fixed to match parent table */
+  grid-template-columns: 20px 4px minmax(240px, 2.5fr) 140px 160px 140px 140px 40px;
+  gap: var(--spacing-8);
+  column-gap: var(--spacing-8);
+}
+.subscription:not(.edit-mode) .license-row .license-checkbox { display: none; }
+.license-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* License bin button — quick-remove for individual license; edit-mode only */
+.license-bin-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.license-bin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+  flex-shrink: 0;
+}
+.license-bin-btn:hover {
+  background: #FDECE8;
+  color: #B42318;
+}
+.license-bin-btn:focus-visible {
+  outline: 2px solid var(--color-accent-magenta);
+  outline-offset: 2px;
+}
+.subscription:not(.edit-mode) .license-bin-btn { display: none; }
+
+/* ============ MARKED-FOR-REMOVAL LICENSE STATE (v3) ============ */
+/* Non-Mapping-Matter licenses that have been marked for deletion remain visible
+   and FULLY FUNCTIONAL in the table — the user can still copy the key, toggle
+   visibility, edit the label, and reassign until the end of the billing cycle.
+   The only visual signals are a soft pink background and an icon swap on the
+   action button (bin → do-not-disturb-off). */
+.license-row.marked-for-removal {
+  background: #FCE3DD;
+}
+.license-row.marked-for-removal:hover {
+  background: #FBD8D0;
+}
+
+/* The label input keeps its white pill but with a subtle peach edge so it
+   doesn't visually clash with the row's pink background */
+.license-row.marked-for-removal .license-label {
+  border-color: rgba(180, 35, 24, 0.12);
+}
+
+/* Action button when row is marked — same shape as the bin button but
+   uses the do-not-disturb-off glyph. Still clickable to undo. */
+.license-undo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.license-undo-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--color-gray-900);
+}
+.license-undo-btn:focus-visible {
+  outline: 2px solid var(--color-accent-magenta);
+  outline-offset: 2px;
+}
+/* When the removal has been confirmed (post Update Subscription), the icon
+   stays visible to indicate "scheduled for removal" but cannot be undone. */
+.license-undo-btn:disabled,
+.license-undo-btn.confirmed {
+  cursor: not-allowed;
+  pointer-events: none;
+  color: var(--color-gray-500);
+}
+/* Hide undo button entirely in view mode UNLESS the row is in marked-for-removal
+   state (i.e. confirmed). In that case the button stays visible but disabled. */
+.subscription:not(.edit-mode) .license-undo-btn { display: none; }
+.subscription:not(.edit-mode) .license-row.marked-for-removal .license-undo-btn { display: inline-flex; }
+
+/* Combined identity cell: label input + key chip side by side */
+.license-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  min-width: 0;
+}
+.license-identity .license-label {
+  flex: 0 1 130px;
+  min-width: 80px;
+}
+/* In edit mode: label stretches to fill, key chip stays naturally-sized */
+.subscription.edit-mode .license-identity .license-label {
+  flex: 1 1 auto;
+  max-width: none;
+}
+.subscription.edit-mode .license-identity .license-key-chip {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.license-identity .license-key-chip {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+.license-identity .seat-marker {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.license-status {
+  display: flex;
+  align-items: center;
+  padding-left: var(--spacing-16);
+}
+/* When the license-status cell holds a pill (marked-for-removal rows) instead
+   of the small dot, drop the left inset so the pill aligns to the column edge. */
+.license-status:has(.license-status-pill) { padding-left: 0; }
+
+/* A compacter status pill for use inline within a license row. */
+.license-status-pill {
+  height: 22px;
+  padding: 0 var(--spacing-8);
+  font-size: 11px;
+  letter-spacing: 0;
+}
+.license-days-text {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-medium);
+}
+.license-days-text svg { color: var(--color-gray-500); flex-shrink: 0; }
+
+.license-label {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-base-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-4) var(--spacing-8);
+  min-width: 0;
+  max-width: 130px;
+}
+.license-label input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  font-size: var(--font-size-body);
+  color: var(--color-gray-900);
+  min-width: 0;
+  width: 100%;
+}
+.license-label input::placeholder { color: var(--color-gray-400); }
+.license-label .edit-pencil {
+  color: var(--color-gray-500);
+  display: inline-flex;
+  margin-left: var(--spacing-4);
+  flex-shrink: 0;
+}
+
+.license-key-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-700);
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  letter-spacing: -0.01em;
+  position: relative;
+}
+.license-key-chip .key-icon {
+  display: inline-flex;
+  color: var(--color-gray-700);
+  flex-shrink: 0;
+}
+.license-key-chip .key-code {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-gray-700);
+}
+.license-key-chip .key-action-btn {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-gray-700);
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.license-key-chip .key-action-btn:hover {
+  background: var(--color-gray-100);
+  color: var(--color-gray-900);
+}
+.license-key-chip .copied-tag {
+  position: absolute;
+  top: -28px;
+  right: 0;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gray-900);
+  color: var(--color-base-white);
+  font-family: var(--font-family);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0;
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
+  z-index: 20;
+  box-shadow: var(--shadow-md);
+}
+.license-key-chip .copied-tag::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  right: 14px;
+  width: 6px; height: 6px;
+  background: var(--color-gray-900);
+  transform: rotate(45deg);
+}
+.license-key-chip .copied-tag.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.assignee-wrap {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.assignee-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-4) var(--spacing-8) var(--spacing-4) var(--spacing-8);
+  background: var(--color-gray-100);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-medium);
+  transition: background 0.15s, box-shadow 0.15s;
+  min-width: 140px;
+  width: 100%;
+}
+.assignee-chip:hover { background: var(--color-gray-200); }
+.assignee-chip.open {
+  background: var(--color-base-white);
+  box-shadow: 0 0 0 2px var(--color-accent-magenta), var(--shadow-sm);
+}
+.assignee-chip svg { color: var(--color-gray-500); }
+.assignee-chip .chevron { margin-left: auto; color: var(--color-gray-500); transition: transform 0.2s; }
+.assignee-chip.open .chevron { transform: rotate(180deg); }
+
+.assignee-avatar {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.assignee-avatar.unassigned {
+  background: var(--color-gray-200);
+  color: var(--color-gray-500);
+}
+.assignee-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Dropdown */
+.assignee-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--color-base-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-gray-200);
+  padding: var(--spacing-8);
+  min-width: 280px;
+  z-index: 60;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
+}
+.assignee-dropdown.open {
+  opacity: 1; transform: translateY(0); pointer-events: auto;
+}
+.assignee-option {
+  display: grid;
+  grid-template-columns: 36px 1fr 16px;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: var(--spacing-8) var(--spacing-8);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+  width: 100%;
+}
+.assignee-option:hover { background: var(--color-gray-50); }
+.assignee-option.selected { background: var(--color-gray-100); }
+.assignee-option .avatar-lg {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  font-size: 13px;
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+}
+.assignee-option .avatar-lg.unassigned {
+  background: var(--color-gray-200);
+  color: var(--color-gray-500);
+}
+.assignee-option .name-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.assignee-option .name-col .name {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  line-height: 1.2;
+}
+.assignee-option .name-col .email {
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.assignee-option .check {
+  color: var(--color-accent-magenta);
+  opacity: 0;
+}
+.assignee-option.selected .check { opacity: 1; }
+
+/* Seat marker */
+.seat-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-medium);
+}
+.seat-marker svg { color: var(--color-gray-500); }
+
+/* Edit-mode action bar — sits between the subscription header row and the product list.
+   Add Product anchors the left; Discard Changes + Update Subscription anchor the right. */
+.add-product-area {
+  display: none;
+}
+.subscription.edit-mode .add-product-area {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16) var(--spacing-16) var(--spacing-12);
+  position: relative;
+  z-index: 5;
+}
+.add-product-area .action-btn {
+  position: relative;
+  justify-content: center;
+}
+.add-product-wrap {
+  position: relative;
+}
+.edit-actions-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Discard Changes button — light secondary, sits beside the dark Update Subscription button */
+.btn-discard {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: var(--color-base-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+.btn-discard:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+  color: var(--color-gray-900);
+  transform: translateY(-1px);
+}
+.btn-discard:active { transform: translateY(0); }
+.btn-discard:focus-visible {
+  outline: 2px solid var(--color-accent-magenta);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: var(--color-accent-magenta);
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-900);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+.btn-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  transition: all 0.2s;
+}
+.btn-secondary:hover { background: var(--color-gray-200); color: var(--color-gray-900); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+}
+.btn-ghost:hover { background: var(--color-gray-100); color: var(--color-gray-900); }
+
+.product-dropdown {
+  position: absolute;
+  top: calc(100% - 4px);
+  right: var(--spacing-16);
+  background: var(--color-base-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-gray-200);
+  padding: var(--spacing-4);
+  min-width: 220px;
+  z-index: 50;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
+}
+.product-dropdown.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-body);
+  color: var(--color-gray-900);
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s;
+}
+.dropdown-item:hover {
+  background: var(--color-gray-50);
+}
+.dropdown-item.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.dropdown-item.highlight {
+  background: var(--color-accent-pink-light);
+  color: var(--color-gray-900);
+}
+
+/* Remove All Selected — stacked in action column, disabled until items are checked */
+.remove-selected-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  color: var(--color-gray-400);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.2s;
+  width: 180px;
+  white-space: nowrap;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.remove-selected-btn.active {
+  background: var(--color-gray-900);
+  border-color: var(--color-gray-900);
+  color: var(--color-base-white);
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: var(--shadow-sm);
+}
+.remove-selected-btn.active:hover {
+  background: var(--color-gray-800);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-8) var(--spacing-16);
+  background: var(--color-gray-900);
+  border-radius: var(--radius-sm);
+  color: var(--color-base-white);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+.btn-danger:hover {
+  background: var(--color-gray-800);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============ PENDING SECTION ============ */
+.pending-section {
+  margin-top: var(--spacing-40);
+}
+.pending-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  padding: 0 var(--spacing-8);
+  margin-bottom: var(--spacing-16);
+  cursor: pointer;
+}
+.pending-title {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-900);
+  letter-spacing: -0.02em;
+}
+.pending-count {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  min-width: 28px; height: 28px; padding: 0 var(--spacing-8);
+  background: var(--color-gray-900);
+  color: var(--color-base-white);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
+}
+.pending-chevron {
+  margin-left: auto;
+  color: var(--color-gray-500);
+  transition: transform 0.25s;
+}
+.pending-chevron.closed { transform: rotate(-90deg); }
+
+.pending-list {
+  display: grid;
+  gap: var(--spacing-12);
+  overflow: hidden;
+  max-height: 2000px;
+  transition: max-height 0.4s ease;
+}
+.pending-list.collapsed { max-height: 0; }
+
+.pending-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-16);
+  align-items: center;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-16) var(--spacing-20, 20px);
+  border: none;
+  animation: slideIn 0.4s ease both;
+}
+.pending-item.add {
+  background: #E7FBF4;
+}
+.pending-item.remove {
+  background: #FDECE8;
+}
+.pending-item.neutral {
+  background: var(--color-gray-100);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pending-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+.pending-body .row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  flex-wrap: wrap;
+}
+.pending-product-icon {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.pending-product-icon img { width: 100%; height: 100%; display: block; }
+.pending-key-icon {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  color: var(--color-gray-900);
+  flex-shrink: 0;
+  margin-right: var(--spacing-4);
+}
+.pending-headline {
+  font-size: var(--font-size-body-lg);
+  color: var(--color-gray-900);
+  line-height: 1.4;
+}
+.pending-headline strong {
+  font-weight: var(--font-weight-bold);
+}
+.pending-headline .soft {
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-regular);
+}
+.pending-note {
+  font-size: var(--font-size-caption);
+  color: var(--color-gray-600);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-2);
+}
+
+.pending-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  flex-shrink: 0;
+}
+.pending-date {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Pending Updates pill — light orange bg, orange-brown text */
+.pending-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-4) var(--spacing-12);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  background: #FEE4D7;
+  color: #B54708;
+  border: 1px solid #FCD5C2;
+  white-space: nowrap;
+}
+
+.pending-addnow {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-4);
+}
+.pending-addnow-label {
+  font-size: var(--font-size-body);
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-medium);
+}
+
+.toggle-sm {
+  position: relative;
+  width: 36px; height: 20px;
+  background: var(--color-gray-300);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.toggle-sm::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  background: var(--color-base-white);
+  border-radius: 50%;
+  transition: transform 0.25s;
+}
+.toggle-sm.on { background: var(--color-accent-magenta); }
+.toggle-sm.on::after { transform: translateX(16px); }
+
+/* ============ MODAL ============ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(16,24,40,0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center; justify-content: center;
+  padding: var(--spacing-24);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal {
+  background: var(--color-base-white);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.modal-backdrop.open .modal {
+  transform: translateY(0) scale(1);
+}
+.modal-header {
+  padding: var(--spacing-32) var(--spacing-32) var(--spacing-24);
+  background: var(--color-gray-50);
+}
+.modal-title {
+  font-size: 28px;
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--color-gray-900);
+  line-height: 1.15;
+}
+.modal-subtitle {
+  font-size: var(--font-size-body-lg);
+  color: var(--color-gray-500);
+  margin-top: var(--spacing-8);
+  line-height: 1.4;
+}
+.modal-body {
+  padding: var(--spacing-16) var(--spacing-32) var(--spacing-24);
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  background: var(--color-base-white);
+}
+.modal-empty {
+  padding: var(--spacing-24);
+  text-align: center;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-body);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+/* Change row — softer tints, cleaner layout */
+.modal-change {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  padding: var(--spacing-16) var(--spacing-20, 20px);
+  border-radius: var(--radius-md);
+  background: var(--color-gray-100);
+}
+.modal-change.add { background: #E7FBF4; }
+.modal-change.remove { background: #FDECE8; }
+.modal-change.neutral { background: var(--color-gray-100); }
+
+.modal-change-icon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-gray-900);
+}
+.modal-change.add .modal-change-icon {
+  background: #6BFFDC;
+}
+.modal-change.remove .modal-change-icon {
+  background: #FDA29B;
+}
+.modal-change.neutral .modal-change-icon {
+  background: var(--color-gray-300);
+  color: var(--color-gray-900);
+}
+
+.modal-change-text {
+  font-size: 16px;
+  color: var(--color-gray-900);
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+}
+.modal-change-text strong {
+  font-weight: var(--font-weight-bold);
+}
+
+.modal-change-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-12);
+  flex-shrink: 0;
+}
+
+.modal-change-badge {
+  font-size: var(--font-size-body);
+  padding: var(--spacing-4) var(--spacing-12);
+  border-radius: var(--radius-pill);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-base-white);
+  border: 1px solid var(--color-gray-200);
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+/* Add Now inline toggle on add entries */
+.modal-addnow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  font-size: var(--font-size-body);
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-medium);
+  flex-direction: row-reverse;
+}
+.modal-addnow .toggle-sm {
+  width: 44px; height: 24px;
+}
+.modal-addnow .toggle-sm::after {
+  width: 20px; height: 20px;
+}
+.modal-addnow .toggle-sm.on::after { transform: translateX(20px); }
+
+.modal-footer {
+  padding: var(--spacing-16) var(--spacing-32) var(--spacing-24);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--spacing-16);
+  background: var(--color-base-white);
+}
+.modal-footer .btn-ghost {
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-medium);
+}
+.modal-footer .btn-primary {
+  padding: var(--spacing-12) var(--spacing-24);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-body-lg);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: var(--spacing-24);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--color-gray-900);
+  color: var(--color-base-white);
+  padding: var(--spacing-12) var(--spacing-24);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 300;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============ RESPONSIVE ============ */
+/* ============ RESPONSIVE ============ */
+/* Table responsiveness uses a container query so it reacts to the centre
+   column's actual width, not the viewport width.  This means the table
+   adapts correctly whether the panel is visible (narrow centre) or not. */
+@container (max-width: 900px) {
+  .table-header { display: none; }
+
+  .subscription-row,
+  .product-row,
+  .license-row {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-8) var(--spacing-12);
+  }
+
+  .subscription-title-block,
+  .product-identity,
+  .license-identity {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .license-identity { flex-wrap: wrap; }
+  .license-identity .license-label { flex: 0 1 auto; max-width: 100%; }
+  .license-identity .license-key-chip,
+  .license-identity .seat-marker { flex: 1 1 auto; }
+
+  .assignee-wrap { flex: 1 1 100%; min-width: 0; }
+  .assignee-chip { min-width: 0; width: 100%; }
+
+  .subscription-row > div:empty,
+  .product-row > div:empty,
+  .license-row > div:empty { display: none; }
+
+  #memberCell:empty { display: none; }
+
+  .license-control { flex-direction: column; align-items: stretch; gap: var(--spacing-12); }
+  .license-control-label { justify-content: space-between; width: 100%; }
+
+  .assignee-dropdown { left: 0; right: 0; min-width: 0; }
+}
+
+/* Modal sizing still needs a viewport query (it's not inside the container) */
+@media (max-width: 900px) {
+  .modal { max-width: 95vw; }
+}
+
+@media (max-width: 560px) {
+  .main-column { padding: var(--spacing-12) var(--spacing-12) 0; }
+  .subscription-row { padding: var(--spacing-12); }
+  .product-row { padding: var(--spacing-16) var(--spacing-12); }
+  .product-body-inner { padding: 0 var(--spacing-12) var(--spacing-12); }
+  .subscription-name { font-size: var(--font-size-body); }
+  .modal-change { grid-template-columns: 24px 1fr; }
+  .modal-change-badge { grid-column: 2; justify-self: start; }
+  .pending-item { grid-template-columns: 1fr; }
+  .pending-meta { grid-column: 1 / -1; justify-content: flex-start; margin-top: var(--spacing-4); }
+}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============ LEFT NAVIGATION ============ -->
+  <aside class="app-nav">
+    <div class="nav-top">
+      <button class="nav-collapse-btn" id="navToggleBtn" aria-label="Toggle navigation">
+        <svg width="22" height="22" viewBox="205 21 20 20" fill="none" aria-hidden="true">
+          <path d="M221.665 21.6646H207.665C206.56 21.6646 205.665 22.56 205.665 23.6646V37.6646C205.665 38.7691 206.56 39.6646 207.665 39.6646H221.665C222.769 39.6646 223.665 38.7691 223.665 37.6646V23.6646C223.665 22.56 222.769 21.6646 221.665 21.6646Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M211.665 21.6646V39.6646" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="nav-toggle-chevron-collapse" d="M218.665 33.6646L215.665 30.6646L218.665 27.6646" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="nav-toggle-chevron-expand" d="M212.665 33.6646L215.665 30.6646L212.665 27.6646" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="nav-logo">
+        <svg class="nav-logo-mark" width="20" height="28" viewBox="21 16 22 30" fill="currentColor" aria-hidden="true">
+          <path d="M27.1277 19.7891V41.4443L23.8796 43.6094V17.624L27.1277 19.7891ZM33.6238 24.1201V37.1123L30.3757 39.2773V21.9551L33.6238 24.1201ZM40.1199 28.4512V32.7812L36.8718 34.9482V26.2852L40.1199 28.4512Z"/>
+        </svg>
+        <span class="nav-logo-text">DISGUISE</span>
+      </div>
+    </div>
+
+    <nav class="nav-items">
+      <a class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-3v-7H9v7H5a2 2 0 0 1-2-2v-9z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.75"/><path d="M4 21v-1a8 8 0 0 1 16 0v1" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        <span class="nav-label">Workspace</span>
+      </a>
+      <a class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><path d="M3 7.5L12 12l9-4.5M12 12v9" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Our Software</span>
+      </a>
+      <a class="nav-item active">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.75"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.75"/></svg>
+        <span class="nav-label">Subscriptions &amp; Licenses</span>
+      </a>
+      <a class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 4v11M5 12l7 7 7-7M4 21h16" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Downloads</span>
+      </a>
+      <a class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Spaces</span>
+      </a>
+      <div class="nav-divider"></div>
+      <a class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4V4zM20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7V4z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>
+        <span class="nav-label">Knowledge</span>
+      </a>
+      <a class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7v.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>
+        <span class="nav-label">Support</span>
+      </a>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">Coming Soon</div>
+      <a class="nav-item disabled">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="9" r="3" stroke="currentColor" stroke-width="1.75"/><circle cx="17" cy="10" r="2.2" stroke="currentColor" stroke-width="1.75"/><path d="M3 19a6 6 0 0 1 12 0M14 19a4 4 0 0 1 8 0" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        <span class="nav-label">Community</span>
+      </a>
+      <a class="nav-item disabled">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 4h2.5l2 12h11l2.5-9H7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.4" stroke="currentColor" stroke-width="1.75"/><circle cx="17" cy="20" r="1.4" stroke="currentColor" stroke-width="1.75"/></svg>
+        <span class="nav-label">Marketplace</span>
+      </a>
+      <a class="nav-item disabled">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.75"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        <span class="nav-label">Jobs</span>
+      </a>
+    </nav>
+
+    <div class="nav-spacer"></div>
+
+    <div class="nav-bottom">
+      <a class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        <span class="nav-label">Notifications</span>
+        <span class="nav-notification-dot"></span>
+      </a>
+      <div class="nav-storage">
+        <div class="nav-storage-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 1 1 18 0" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M12 12l5-3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg>
+          <span class="nav-label">Storage</span>
+        </div>
+        <div class="nav-storage-bar">
+          <div class="nav-storage-fill" style="width: 0.5%"></div>
+        </div>
+        <div class="nav-storage-text">0.136 / 1000 GB</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN AREA ============ -->
+  <main class="app-main">
+<div class="page">
+  <div class="page-grid">
+
+    <!-- TOP NAV: col-1 row-1 — sits between left nav and right panel, not over it -->
+    <nav class="top-nav" aria-label="Top navigation">
+      <button class="top-nav-btn" title="Toggle theme" aria-label="Toggle theme">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="top-nav-btn" title="Language" aria-label="Language">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/><path d="M2 12h20" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M12 2a14.5 14.5 0 0 1 0 20M12 2a14.5 14.5 0 0 0 0 20" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+      </button>
+      <div class="top-nav-cart-wrap">
+        <button class="top-nav-btn" title="Cart" aria-label="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 4h2.5l2 12h11l2.5-9H7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.4" stroke="currentColor" stroke-width="1.75"/><circle cx="17" cy="20" r="1.4" stroke="currentColor" stroke-width="1.75"/></svg>
+        </button>
+        <div class="top-nav-badge" aria-label="1 item in cart">1</div>
+      </div>
+      <div class="top-nav-sep" role="separator"></div>
+      <button class="top-nav-workspace" title="Workspace" aria-label="Workspace">W</button>
+      <button class="top-nav-user top-nav-btn" title="User settings" aria-label="User settings" style="width:auto;gap:6px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.75"/><path d="M4 21v-1a8 8 0 0 1 16 0v1" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.75"/><path d="M12 2v2m0 16v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+      </button>
+    </nav>
+
+    <div class="main-column">
+  <div class="page-header">
+    <!-- Breadcrumb title: Subscription & Licenses / Overview -->
+    <div class="page-breadcrumb">
+      <span class="page-breadcrumb-root">Subscription &amp; Licenses</span>
+      <span class="page-breadcrumb-sep">/</span>
+      <span class="page-breadcrumb-current">Overview</span>
+    </div>
+
+
+    <!-- Filter chips — same style as member dropdown -->
+    <div class="filter-chips">
+      <button class="assignee-chip filter-chip" id="filterProduct">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="assignee-name">Product</span>
+        <span class="chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+
+      <button class="assignee-chip filter-chip" id="filterStatus">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/></svg>
+        <span class="assignee-name">Status</span>
+        <span class="chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+
+      <button class="assignee-chip filter-chip" id="filterRenewal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><path d="M3 9h18M8 2v4M16 2v4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        <span class="assignee-name">Renewal Date</span>
+        <span class="chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+
+      <button class="assignee-chip filter-chip" id="filterMember">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.75"/><path d="M4 21v-1a7 7 0 0 1 14 0v1" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        <span class="assignee-name">Member</span>
+        <span class="chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Table header -->
+  <div class="table-header">
+    <div>Subscription</div>
+    <div>Status</div>
+    <div>Days Remaining</div>
+    <div>Auto-Renew</div>
+    <div>Member</div>
+    <div></div>
+  </div>
+
+  <!-- MAIN EDITABLE SUBSCRIPTION -->
+  <div id="mainSubscription" class="subscription">
+    <div class="subscription-row">
+      <div class="subscription-title-block">
+        <button class="chevron-btn open" id="subChevron" aria-label="Toggle subscription">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div id="subscriptionNameWrap">
+            <div class="subscription-name" id="subscriptionName">Editable Subs Name</div>
+          </div>
+          <div class="subscription-meta"><strong id="totalProductsLabel">4</strong> Products <strong id="totalLicensesLabel">17</strong> Licenses</div>
+        </div>
+      </div>
+      <div><span class="status-pill active">Active</span></div>
+      <div><span class="days-text"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>186 days</span></div>
+      <div id="autoRenewCell">
+        <span class="renew-icon" title="Auto-renew on">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 4v6h-6M4 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10a8 8 0 0 0-14.5-4M4 14a8 8 0 0 0 14.5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
+      <div id="memberCell"></div>
+      <div class="kebab-wrap" id="kebabWrap">
+        <button class="kebab-btn" id="kebabBtn" aria-label="More options">
+          <svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="2"/><circle cx="2" cy="8" r="2"/><circle cx="2" cy="14" r="2"/></svg>
+        </button>
+        <div class="menu-dropdown" id="menuDropdown">
+          <button class="menu-item primary" id="editSubBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Edit Subscription
+          </button>
+          <button class="menu-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Cancel Subscription
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="addProductArea" class="add-product-area">
+      <div class="add-product-wrap">
+        <button class="btn-primary action-btn" id="addProductBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          Add Product
+        </button>
+        <div class="product-dropdown" id="productDropdown">
+        <button class="dropdown-item" data-product="designerPro">
+          <span class="product-icon" style="width:24px;height:24px;border-radius:var(--radius-sm);"><img src="" alt="" class="product-img" data-icon="designerPro" /></span>
+          Designer Pro
+        </button>
+        <button class="dropdown-item" data-product="designerX1">
+          <span class="product-icon" style="width:24px;height:24px;border-radius:var(--radius-sm);"><img src="" alt="" class="product-img" data-icon="designerX1" /></span>
+          Designer X1
+        </button>
+        <button class="dropdown-item" data-product="mappingMatter">
+          <span class="product-icon" style="width:24px;height:24px;border-radius:var(--radius-sm);"><img src="" alt="" class="product-img" data-icon="mappingMatter" /></span>
+          Mapping Matter
+        </button>
+        <button class="dropdown-item" data-product="renderStream" data-locked="true">
+          <span class="product-icon" style="width:24px;height:24px;border-radius:var(--radius-sm);"><img src="" alt="" class="product-img" data-icon="renderStream" /></span>
+          RenderStream
+        </button>
+      </div>
+      </div>
+      <div id="editActionsRight" class="edit-actions-right"></div>
+    </div>
+
+    <div id="productsContainer" class="products">
+      <div class="section-title" id="newlyAddedLabel">Newly Added</div>
+      <div id="newlyAddedList"></div>
+      <div class="section-divider" id="sectionDivider"></div>
+      <div class="section-title" id="existingLabel">Existing Products</div>
+      <div id="existingList"></div>
+    </div>
+  </div>
+
+  <!-- SECONDARY SUBSCRIPTIONS (display only) -->
+  <div class="subscription secondary">
+    <div class="subscription-row">
+      <div class="subscription-title-block">
+        <button class="chevron-btn" aria-label="Toggle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div class="subscription-name">Editable Subscription Name</div>
+          <div class="subscription-meta"><strong>3</strong> Products <strong>16</strong> Licenses</div>
+        </div>
+      </div>
+      <div><span class="status-pill expired">Expired</span></div>
+      <div></div>
+      <div>
+        <span class="renew-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 4v6h-6M4 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10a8 8 0 0 0-14.5-4M4 14a8 8 0 0 0 14.5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <div></div>
+      <div><button class="kebab-btn"><svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="2"/><circle cx="2" cy="8" r="2"/><circle cx="2" cy="14" r="2"/></svg></button></div>
+    </div>
+  </div>
+
+  <div class="subscription secondary">
+    <div class="subscription-row">
+      <div class="subscription-title-block">
+        <button class="chevron-btn" aria-label="Toggle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div>
+          <div class="subscription-name">Editable Subscription Name</div>
+          <div class="subscription-meta"><strong>3</strong> Products <strong>16</strong> Licenses</div>
+        </div>
+      </div>
+      <div><span class="status-pill expiring">Expiring Soon</span></div>
+      <div></div>
+      <div>
+        <span class="renew-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 4v6h-6M4 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10a8 8 0 0 0-14.5-4M4 14a8 8 0 0 0 14.5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <div></div>
+      <div><button class="kebab-btn"><svg width="4" height="16" viewBox="0 0 4 16" fill="currentColor"><circle cx="2" cy="2" r="2"/><circle cx="2" cy="8" r="2"/><circle cx="2" cy="14" r="2"/></svg></button></div>
+    </div>
+  </div>
+
+  <!-- PENDING SECTION -->
+  <section class="pending-section">
+    <div class="pending-header" id="pendingHeader">
+      <div class="pending-title">Subscription changes</div>
+      <div class="pending-count" id="pendingCount">1</div>
+      <svg class="pending-chevron" id="pendingChevron" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="pending-list" id="pendingList"></div>
+  </section>
+
+    </div><!-- /.main-column -->
+
+    <aside class="side-panel" id="sidePanel">
+      <div class="panel-header">
+        <div class="panel-name" id="panelName">Editable Subs Name</div>
+        <button class="panel-close" id="panelCloseBtn" aria-label="Close panel">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div class="panel-section-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.75"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.75"/></svg>
+        Subscription Details
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-row">
+          <div class="panel-row-label">Status</div>
+          <div class="panel-row-value"><span class="status-pill active" id="panelStatusPill">Active</span></div>
+        </div>
+
+        <div class="panel-row">
+          <div class="panel-row-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.75"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.75"/></svg>
+            Plan Type
+          </div>
+          <div class="panel-row-value">Annual</div>
+        </div>
+
+        <div class="panel-row">
+          <div class="panel-row-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 3h8l4 4v13a1 1 0 0 1-1.5.87L17 20l-1.5 1-1.5-1-1.5 1-1.5-1-1.5 1L8 20l-1.5.87A1 1 0 0 1 5 20V4a1 1 0 0 1 1-1h1z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><path d="M9 9h6M9 12h6M9 15h4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+            Next Invoice
+          </div>
+          <div class="panel-row-value">$15,000</div>
+        </div>
+
+        <div class="panel-row">
+          <div class="panel-row-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><path d="M3 9h18M8 2v4M16 2v4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+            Start Date
+          </div>
+          <div class="panel-row-value">01/01/2024</div>
+        </div>
+
+        <div class="panel-row">
+          <div class="panel-row-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><path d="M3 9h18M8 2v4M16 2v4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M8 14l2 2 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Renewal Date
+          </div>
+          <div class="panel-row-value">20/04/2026</div>
+        </div>
+
+        <div class="panel-row">
+          <div class="panel-row-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 4v6h-6M4 20v-6h6" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10a8 8 0 0 0-14.5-4M4 14a8 8 0 0 0 14.5 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Auto-Renew
+          </div>
+          <div class="panel-renew-select">
+            <button class="panel-renew-trigger" id="panelRenewTrigger">
+              <span id="panelRenewLabel">Enabled</span>
+              <span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </button>
+            <div class="panel-renew-dropdown" id="panelRenewDropdown">
+              <button class="panel-renew-option" data-value="enabled">
+                <span>Enabled</span>
+                <span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </button>
+              <button class="panel-renew-option" data-value="disabled">
+                <span>Disabled</span>
+                <span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-divider"></div>
+
+        <div class="panel-actions">
+          <button class="panel-btn panel-btn-primary" id="panelEditBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="panelEditBtnLabel">Edit Subscription</span>
+          </button>
+          <button class="panel-btn panel-btn-secondary" id="panelPaymentBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.75"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.75"/></svg>
+            Update Payment Info
+          </button>
+        </div>
+      </div>
+
+      <div class="panel-latest-invoice">
+        <div class="panel-latest-invoice-title">Latest Invoice</div>
+        <a href="#" class="panel-latest-invoice-link">View All</a>
+      </div>
+    </aside>
+  </div><!-- /.page-grid -->
+</div>
+  </main>
+</div><!-- /.app-shell -->
+
+<!-- CONFIRMATION MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Review your changes</h2>
+      <div class="modal-subtitle">These will be applied at the end of the billing cycle unless <em>Add Now</em> is enabled later.</div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="modalCancelBtn">Cancel</button>
+      <button class="btn-primary" id="modalConfirmBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Confirm changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DATA ============ */
+/* Real product icons — provided SVGs (32x32) */
+const ICONS = {
+  designerPro:   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC4xMTY3ODgiIHk9IjAuMTE2Nzg4IiB3aWR0aD0iMzEuNzY2NCIgaGVpZ2h0PSIzMS43NjY0IiByeD0iMy44ODMyMSIgZmlsbD0iIzFEMjkzOSIvPgo8cmVjdCB4PSIwLjExNjc4OCIgeT0iMC4xMTY3ODgiIHdpZHRoPSIzMS43NjY0IiBoZWlnaHQ9IjMxLjc2NjQiIHJ4PSIzLjg4MzIxIiBzdHJva2U9IiNEMEQ1REQiIHN0cm9rZS13aWR0aD0iMC4yMzM1NzciLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMC44NzUgMTQuNTA2OFYxNy4zMTc5TDExLjEyNSAyNC4wNzM5VjcuOTI3NzNMMjAuODc1IDE0LjUwNjhaTTE1LjYwNTIgMTQuMDY0MkMxNC42OTgzIDE0LjA2NDIgMTMuOTYyOSAxNC43OTkzIDEzLjk2MjggMTUuNzA2MkMxMy45NjI4IDE2LjYxMzIgMTQuNjk4MiAxNy4zNDg3IDE1LjYwNTIgMTcuMzQ4N0MxNi41MTIxIDE3LjM0ODYgMTcuMjQ3MiAxNi42MTMyIDE3LjI0NzIgMTUuNzA2MkMxNy4yNDcxIDE0Ljc5OTQgMTYuNTEyMSAxNC4wNjQzIDE1LjYwNTIgMTQuMDY0MloiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xOTA0XzEyNzc5MikiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8xOTA0XzEyNzc5MiIgeDE9IjE2IiB5MT0iNy45Mjc3MyIgeDI9IjE2IiB5Mj0iMjQuMDczOSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRjU3QjY1Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGNzVFNiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=',
+  designerX1:    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC4xMTY3ODgiIHk9IjAuMTE2Nzg4IiB3aWR0aD0iMzEuNzY2NCIgaGVpZ2h0PSIzMS43NjY0IiByeD0iMy44ODMyMSIgZmlsbD0iIzFEMjkzOSIvPgo8cmVjdCB4PSIwLjExNjc4OCIgeT0iMC4xMTY3ODgiIHdpZHRoPSIzMS43NjY0IiBoZWlnaHQ9IjMxLjc2NjQiIHJ4PSIzLjg4MzIxIiBzdHJva2U9IiNEMEQ1REQiIHN0cm9rZS13aWR0aD0iMC4yMzM1NzciLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMC44NzUgMTQuNTA2OFYxNy4zMTc5TDExLjEyNSAyNC4wNzM5VjcuOTI3NzNMMjAuODc1IDE0LjUwNjhaTTE1LjYwNTIgMTQuMDY0MkMxNC42OTgzIDE0LjA2NDIgMTMuOTYyOSAxNC43OTkzIDEzLjk2MjggMTUuNzA2MkMxMy45NjI4IDE2LjYxMzIgMTQuNjk4MiAxNy4zNDg3IDE1LjYwNTIgMTcuMzQ4N0MxNi41MTIxIDE3LjM0ODYgMTcuMjQ3MiAxNi42MTMyIDE3LjI0NzIgMTUuNzA2MkMxNy4yNDcxIDE0Ljc5OTQgMTYuNTEyMSAxNC4wNjQzIDE1LjYwNTIgMTQuMDY0MloiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xOTA0XzEyNzc5OCkiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8xOTA0XzEyNzc5OCIgeDE9IjE2IiB5MT0iNy45Mjc3MyIgeDI9IjE2IiB5Mj0iMjQuMDczOSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRkVGRjM0Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZGODU1OSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=',
+  designerX2:    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC4xMTY3ODgiIHk9IjAuMTE2Nzg4IiB3aWR0aD0iMzEuNzY2NCIgaGVpZ2h0PSIzMS43NjY0IiByeD0iMy44ODMyMSIgZmlsbD0iIzFEMjkzOSIvPgo8cmVjdCB4PSIwLjExNjc4OCIgeT0iMC4xMTY3ODgiIHdpZHRoPSIzMS43NjY0IiBoZWlnaHQ9IjMxLjc2NjQiIHJ4PSIzLjg4MzIxIiBzdHJva2U9IiNEMEQ1REQiIHN0cm9rZS13aWR0aD0iMC4yMzM1NzciLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMC44NzUgMTQuNTA2OFYxNy4zMTc5TDExLjEyNSAyNC4wNzM5VjcuOTI3NzNMMjAuODc1IDE0LjUwNjhaTTE1LjYwNTIgMTQuMDY0MkMxNC42OTgzIDE0LjA2NDIgMTMuOTYyOSAxNC43OTkzIDEzLjk2MjggMTUuNzA2MkMxMy45NjI4IDE2LjYxMzIgMTQuNjk4MiAxNy4zNDg3IDE1LjYwNTIgMTcuMzQ4N0MxNi41MTIxIDE3LjM0ODYgMTcuMjQ3MiAxNi42MTMyIDE3LjI0NzIgMTUuNzA2MkMxNy4yNDcxIDE0Ljc5OTQgMTYuNTEyMSAxNC4wNjQzIDE1LjYwNTIgMTQuMDY0MloiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xOTA0XzEyNzc5NSkiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8xOTA0XzEyNzc5NSIgeDE9IjE2IiB5MT0iNy45Mjc3MyIgeDI9IjE2IiB5Mj0iMjQuMDczOSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjNkJGRkRDIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZFRkYzNCIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=',
+  mappingMatter: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC4xMTY3ODgiIHk9IjAuMTE2Nzg4IiB3aWR0aD0iMzEuNzY2NCIgaGVpZ2h0PSIzMS43NjY0IiByeD0iMy44ODMyMSIgZmlsbD0iIzFEMjkzOSIvPgo8cmVjdCB4PSIwLjExNjc4OCIgeT0iMC4xMTY3ODgiIHdpZHRoPSIzMS43NjY0IiBoZWlnaHQ9IjMxLjc2NjQiIHJ4PSIzLjg4MzIxIiBzdHJva2U9IiNEMEQ1REQiIHN0cm9rZS13aWR0aD0iMC4yMzM1NzciLz4KPHBhdGggZD0iTTIxLjc2MDQgMjEuNzYxNEgxMC4yMzkzVjEwLjI0MDJMMTUuOTk5NCAxOC41MjM4TDIxLjc2MDQgMTAuMjQwMlYyMS43NjE0WiIgZmlsbD0idXJsKCNwYWludDBfbGluZWFyXzE5MDRfMTI3NzM5KSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDBfbGluZWFyXzE5MDRfMTI3NzM5IiB4MT0iMTAuMjM5MyIgeTE9IjEwLjI0MDIiIHgyPSIyMS43NjA0IiB5Mj0iMjEuNzYxNCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRkY2REYwIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzZCRkZEQyIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=',
+  renderStream:  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iMC4xMTY3ODgiIHk9IjAuMTE2Nzg4IiB3aWR0aD0iMzEuNzY2NCIgaGVpZ2h0PSIzMS43NjY0IiByeD0iMy44ODMyMSIgZmlsbD0iIzFEMjkzOSIvPgo8cmVjdCB4PSIwLjExNjc4OCIgeT0iMC4xMTY3ODgiIHdpZHRoPSIzMS43NjY0IiBoZWlnaHQ9IjMxLjc2NjQiIHJ4PSIzLjg4MzIxIiBzdHJva2U9IiNEMEQ1REQiIHN0cm9rZS13aWR0aD0iMC4yMzM1NzciLz4KPHBhdGggZD0iTTIxLjIyNDkgMTMuNTY0OUMyMi40NjA2IDEzLjU2NDkgMjMuNDYyNSAxNC41NjY3IDIzLjQ2MjUgMTUuODAyNVYyMS4zMTU0QzIzLjQ2MjUgMjIuNTUxMSAyMi40NjA2IDIzLjU1MyAyMS4yMjQ5IDIzLjU1M0MxOS45ODkxIDIzLjU1MyAxOC45ODczIDIyLjU1MTEgMTguOTg3MyAyMS4zMTU0VjE1LjgwMjVDMTguOTg3MyAxNC41NjY3IDE5Ljk4OTEgMTMuNTY0OSAyMS4yMjQ5IDEzLjU2NDlaIiBmaWxsPSJ1cmwoI3BhaW50MF9saW5lYXJfMTkwNF8xMjc3ODkpIi8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTUuOTk0MiAxOC45ODMxQzE3LjIzMzMgMTguOTgzMSAxOC4yMzc3IDE5Ljk4NzYgMTguMjM3NyAyMS4yMjY3QzE4LjIzNzcgMjIuNDY1OCAxNy4yMzMzIDIzLjQ3MDIgMTUuOTk0MiAyMy40NzAyQzE0Ljc1NTEgMjMuNDcwMiAxMy43NTA2IDIyLjQ2NTggMTMuNzUwNiAyMS4yMjY3QzEzLjc1MDcgMTkuOTg3NiAxNC43NTUxIDE4Ljk4MzIgMTUuOTk0MiAxOC45ODMxWk0xNS45OTQyIDE5LjQ4NjhDMTUuMDMzMiAxOS40ODY4IDE0LjI1NDMgMjAuMjY1NyAxNC4yNTQzIDIxLjIyNjdDMTQuMjU0MyAyMi4xODc3IDE1LjAzMzIgMjIuOTY3IDE1Ljk5NDIgMjIuOTY3QzE2Ljk1NTIgMjIuOTY3IDE3LjczNDUgMjIuMTg3NyAxNy43MzQ1IDIxLjIyNjdDMTcuNzM0NSAyMC4yNjU3IDE2Ljk1NTIgMTkuNDg2OCAxNS45OTQyIDE5LjQ4NjhaIiBmaWxsPSJ1cmwoI3BhaW50MV9saW5lYXJfMTkwNF8xMjc3ODkpIi8+CjxwYXRoIGQ9Ik0xMy4wMDExIDIzLjQ2NDNIOC41MjU4OFYxOC45ODkxSDEzLjAwMTFWMjMuNDY0M1oiIGZpbGw9InVybCgjcGFpbnQyX2xpbmVhcl8xOTA0XzEyNzc4OSkiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMC43Njk0IDEzLjcxNTJDMTIuMDA4NiAxMy43MTUyIDEzLjAxMyAxNC43MTk3IDEzLjAxMyAxNS45NTg4QzEzLjAxMyAxNy4xOTc5IDEyLjAwODYgMTguMjAyMyAxMC43Njk0IDE4LjIwMjNDOS41MzAzOCAxOC4yMDIzIDguNTI1OTMgMTcuMTk3OCA4LjUyNTg4IDE1Ljk1ODhDOC41MjU5NCAxNC43MTk3IDkuNTMwMzggMTMuNzE1MiAxMC43Njk0IDEzLjcxNTJaTTEwLjc2OTQgMTQuMjE4OUM5LjgwODQ3IDE0LjIxODkgOS4wMjk2MiAxNC45OTc4IDkuMDI5NTYgMTUuOTU4OEM5LjAyOTYxIDE2LjkxOTcgOS44MDg0NyAxNy42OTkgMTAuNzY5NCAxNy42OTkxQzExLjczMDUgMTcuNjk5MSAxMi41MDk3IDE2LjkxOTggMTIuNTA5OCAxNS45NTg4QzEyLjUwOTcgMTQuOTk3NyAxMS43MzA1IDE0LjIxODkgMTAuNzY5NCAxNC4yMTg5WiIgZmlsbD0idXJsKCNwYWludDNfbGluZWFyXzE5MDRfMTI3Nzg5KSIvPgo8cGF0aCBkPSJNMTguMjM3NyAxOC4xOTYzSDEzLjc2MjZWMTMuNzIxMkgxOC4yMzc3VjE4LjE5NjNaIiBmaWxsPSJ1cmwoI3BhaW50NF9saW5lYXJfMTkwNF8xMjc3ODkpIi8+CjxwYXRoIGQ9Ik0xNS45OTQyIDguNDQ3MjdDMTcuMjMzMyA4LjQ0NzI3IDE4LjIzNzcgOS40NTE3MyAxOC4yMzc3IDEwLjY5MDhDMTguMjM3NyAxMS45MyAxNy4yMzMzIDEyLjkzNDQgMTUuOTk0MiAxMi45MzQ0QzE0Ljc1NTEgMTIuOTM0MyAxMy43NTA2IDExLjkyOTkgMTMuNzUwNiAxMC42OTA4QzEzLjc1MDcgOS40NTE3NyAxNC43NTUxIDguNDQ3MzIgMTUuOTk0MiA4LjQ0NzI3WiIgZmlsbD0idXJsKCNwYWludDVfbGluZWFyXzE5MDRfMTI3Nzg5KSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTIxLjIzMDggOC40NDcyN0MyMi40NyA4LjQ0NzI3IDIzLjQ3NDMgOS40NTE3MyAyMy40NzQ0IDEwLjY5MDhDMjMuNDc0NCAxMS45MyAyMi40NyAxMi45MzQ0IDIxLjIzMDggMTIuOTM0NEMxOS45OTE4IDEyLjkzNDMgMTguOTg3MyAxMS45Mjk5IDE4Ljk4NzMgMTAuNjkwOEMxOC45ODczIDkuNDUxODIgMTkuOTkxOCA4LjQ0NzQgMjEuMjMwOCA4LjQ0NzI3Wk0yMS4yMzA4IDguOTUwOTRDMjAuMjY5OSA4Ljk1MTA4IDE5LjQ5MSA5LjcyOTkxIDE5LjQ5MSAxMC42OTA4QzE5LjQ5MSAxMS42NTE4IDIwLjI2OTkgMTIuNDMxIDIxLjIzMDggMTIuNDMxMkMyMi4xOTE5IDEyLjQzMTIgMjIuOTcxMiAxMS42NTE5IDIyLjk3MTIgMTAuNjkwOEMyMi45NzExIDkuNzI5ODIgMjIuMTkxOSA4Ljk1MDk0IDIxLjIzMDggOC45NTA5NFoiIGZpbGw9InVybCgjcGFpbnQ2X2xpbmVhcl8xOTA0XzEyNzc4OSkiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy4wMDExIDEyLjkyODRIOC41MjU4OFY4LjQ1MzI0SDEzLjAwMTFWMTIuOTI4NFpNOS4wMjk1NiAxMi40MjQ3SDEyLjQ5NzRWOC45NTY5Mkg5LjAyOTU2VjEyLjQyNDdaIiBmaWxsPSJ1cmwoI3BhaW50N19saW5lYXJfMTkwNF8xMjc3ODkpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMTkwNF8xMjc3ODkiIHgxPSI4LjUyNTg4IiB5MT0iOC40NDcyNyIgeDI9IjIzLjYzMDgiIHkyPSIyMy4zOTUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0ZGNkRGMCIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM4MjAwRTgiLz4KPC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDFfbGluZWFyXzE5MDRfMTI3Nzg5IiB4MT0iOC41MjU4OCIgeTE9IjguNDQ3MjciIHgyPSIyMy42MzA4IiB5Mj0iMjMuMzk1IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNGRjZERjAiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjODIwMEU4Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQyX2xpbmVhcl8xOTA0XzEyNzc4OSIgeDE9IjguNTI1ODgiIHkxPSI4LjQ0NzI3IiB4Mj0iMjMuNjMwOCIgeTI9IjIzLjM5NSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRkY2REYwIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzgyMDBFOCIvPgo8L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50M19saW5lYXJfMTkwNF8xMjc3ODkiIHgxPSI4LjUyNTg4IiB5MT0iOC40NDcyNyIgeDI9IjIzLjYzMDgiIHkyPSIyMy4zOTUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0ZGNkRGMCIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM4MjAwRTgiLz4KPC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDRfbGluZWFyXzE5MDRfMTI3Nzg5IiB4MT0iOC41MjU4OCIgeTE9IjguNDQ3MjciIHgyPSIyMy42MzA4IiB5Mj0iMjMuMzk1IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNGRjZERjAiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjODIwMEU4Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQ1X2xpbmVhcl8xOTA0XzEyNzc4OSIgeDE9IjguNTI1ODgiIHkxPSI4LjQ0NzI3IiB4Mj0iMjMuNjMwOCIgeTI9IjIzLjM5NSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRkY2REYwIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzgyMDBFOCIvPgo8L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50Nl9saW5lYXJfMTkwNF8xMjc3ODkiIHgxPSI4LjUyNTg4IiB5MT0iOC40NDcyNyIgeDI9IjIzLjYzMDgiIHkyPSIyMy4zOTUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0ZGNkRGMCIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM4MjAwRTgiLz4KPC9saW5lYXJHcmFkaWVudD4KPGxpbmVhckdyYWRpZW50IGlkPSJwYWludDdfbGluZWFyXzE5MDRfMTI3Nzg5IiB4MT0iOC41MjU4OCIgeTE9IjguNDQ3MjciIHgyPSIyMy42MzA4IiB5Mj0iMjMuMzk1IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNGRjZERjAiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjODIwMEU4Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+Cg==',
+};
+
+/* Material UI icons used in license rows */
+const UI_ICONS = {
+  vpnKey: `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.66681 3.9248C5.55988 3.92483 6.30912 4.14078 6.91486 4.57227C7.52129 5.00446 7.96552 5.56281 8.24786 6.24609L8.25177 6.25586H14.2899C14.5976 6.25594 14.8607 6.36581 15.0799 6.58496C15.299 6.80415 15.408 7.06723 15.408 7.375V8.625C15.408 8.9174 15.3111 9.1663 15.117 9.37207C14.9225 9.57796 14.6915 9.69219 14.4236 9.71582H13.6414V10.9238C13.6388 11.2289 13.5295 11.4889 13.3123 11.7041C13.0951 11.9193 12.8322 12.0272 12.5233 12.0273H11.6063C11.2949 12.0273 11.0326 11.9199 10.8192 11.7061C10.6056 11.4919 10.4963 11.2421 10.491 10.9561V9.74414H8.25177L8.24786 9.75391C7.96558 10.4371 7.52112 10.9946 6.91486 11.4268C6.30912 11.8582 5.55988 12.0752 4.66681 12.0752C3.53709 12.0752 2.57578 11.6776 1.78204 10.8838C0.988578 10.09 0.59165 9.12892 0.591614 7.99902C0.591614 6.86908 0.988417 5.90755 1.78204 5.11426C2.57575 4.32118 3.53716 3.9248 4.66681 3.9248ZM4.66681 4.9834C3.82911 4.9834 3.11658 5.27679 2.53009 5.86328C1.9436 6.44978 1.65021 7.1623 1.65021 8C1.65024 8.83765 1.94363 9.55025 2.53009 10.1367C3.11656 10.7231 3.82917 11.0166 4.66681 11.0166C5.47309 11.0166 6.1321 10.7471 6.6424 10.208C7.14539 9.67656 7.43785 9.17027 7.51837 8.68945H11.6082V10.9727H12.5838V8.68945H14.3504V7.31055H7.5213C7.43889 6.8297 7.14544 6.32351 6.6424 5.79199C6.13209 5.25283 5.4731 4.98343 4.66681 4.9834ZM4.66779 6.83984C4.99971 6.83987 5.27526 6.95057 5.49591 7.17188C5.7165 7.39308 5.82697 7.66894 5.82697 8.00098C5.82694 8.33031 5.71629 8.60524 5.49493 8.82715C5.27373 9.04912 4.99784 9.16012 4.66583 9.16016C4.33654 9.16016 4.06158 9.0488 3.83966 8.82617C3.61763 8.6036 3.50669 8.32832 3.50665 7.99902C3.50665 7.66708 3.61799 7.39158 3.84064 7.1709C4.06324 6.95017 4.3384 6.83984 4.66779 6.83984Z" fill="currentColor"/></svg>`,
+  fileCopy: `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.79199 4.02539C1.9489 4.02539 2.07912 4.0788 2.18359 4.18457C2.28799 4.2904 2.34082 4.421 2.34082 4.57715V14.3066H10.1172C10.2733 14.3066 10.4039 14.3594 10.5098 14.4658C10.6156 14.5722 10.6689 14.7034 10.6689 14.8604C10.6689 15.0173 10.6155 15.1476 10.5098 15.252C10.404 15.3564 10.2733 15.4082 10.1172 15.4082H2.35742C2.05548 15.4082 1.79352 15.2974 1.57129 15.0752C1.34927 14.8532 1.23837 14.5919 1.23828 14.29V4.57715C1.23828 4.42107 1.29193 4.29043 1.39844 4.18457C1.50475 4.07882 1.63538 4.02547 1.79199 4.02539ZM4.49707 0.591797H9.78027C9.93421 0.591797 10.0813 0.622311 10.2207 0.683594C10.3255 0.729681 10.4197 0.787359 10.5039 0.855469L10.585 0.926758L13.8271 4.16992C13.9279 4.27317 14.009 4.39438 14.0703 4.53418C14.1315 4.67348 14.163 4.81984 14.1631 4.97363V12.1504C14.163 12.4533 14.0514 12.7157 13.8281 12.9385C13.6045 13.1615 13.3431 13.2734 13.0439 13.2734H4.49707C4.19401 13.2734 3.93102 13.1615 3.70801 12.9385C3.48518 12.7157 3.37407 12.4534 3.37402 12.1504V1.71094C3.37402 1.4089 3.48501 1.14693 3.70801 0.924805C3.931 0.702598 4.19401 0.591797 4.49707 0.591797ZM4.48047 12.167H13.0605V4.875H10.6504C10.4173 4.875 10.2202 4.79326 10.0576 4.63086C9.89501 4.46825 9.81348 4.27031 9.81348 4.03711V1.69434H4.48047V12.167Z" fill="currentColor"/></svg>`,
+  visibility: `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.99982 2.5918C9.50982 2.5918 10.8832 3.01471 12.1199 3.86035C13.3574 4.70645 14.3493 5.79008 15.0955 7.11133C15.1446 7.19941 15.1815 7.29051 15.2059 7.38379C15.2303 7.47706 15.242 7.57188 15.242 7.66797C15.242 7.76411 15.2304 7.85854 15.2059 7.95117C15.1815 8.04397 15.1446 8.13461 15.0955 8.22266C14.3493 9.54389 13.3573 10.6275 12.1199 11.4736C10.8832 12.3192 9.50978 12.7422 7.99982 12.7422C6.4899 12.7421 5.1164 12.3192 3.8797 11.4736C2.64245 10.6276 1.65124 9.54372 0.90509 8.22266C0.855967 8.1345 0.819146 8.04355 0.794739 7.9502C0.77023 7.85685 0.757642 7.76219 0.757629 7.66602C0.757629 7.56987 0.770266 7.47544 0.794739 7.38281C0.819143 7.29001 0.855962 7.19939 0.90509 7.11133C1.65123 5.79022 2.64244 4.7064 3.8797 3.86035C5.1164 3.01475 6.4899 2.59184 7.99982 2.5918ZM8.00275 3.65039C6.65359 3.65039 5.41465 4.01477 4.28693 4.74414C3.15935 5.47351 2.29449 6.44553 1.69318 7.65918L1.68927 7.66699L1.69318 7.67383C2.29445 8.88751 3.15813 9.85946 4.284 10.5889C5.41027 11.3184 6.64867 11.6836 7.99786 11.6836C9.34704 11.6835 10.586 11.3183 11.7137 10.5889C12.8412 9.85945 13.7007 8.88754 14.2908 7.67383L14.2938 7.66699L14.2908 7.65918C13.7006 6.44541 12.8416 5.47355 11.7156 4.74414C10.5895 4.01481 9.35171 3.65043 8.00275 3.65039ZM7.99786 4.85059C8.78105 4.85059 9.44677 5.1231 9.99493 5.66992C10.5431 6.21676 10.8162 6.88185 10.8162 7.66504C10.8162 8.44801 10.5435 9.11306 9.99689 9.66113C9.45005 10.2093 8.78495 10.4834 8.00177 10.4834C7.21868 10.4833 6.55379 10.2099 6.00568 9.66309C5.45757 9.11628 5.18343 8.45207 5.18341 7.66895C5.18341 6.88575 5.45688 6.22004 6.00372 5.67188C6.55046 5.12397 7.21491 4.85062 7.99786 4.85059ZM8.00275 5.84766C7.49686 5.84772 7.06595 6.02378 6.71173 6.37598C6.35759 6.72822 6.18048 7.15814 6.18048 7.66406C6.18053 8.16998 6.35659 8.60084 6.7088 8.95508C7.06105 9.30933 7.49092 9.4863 7.99689 9.48633C8.50284 9.48633 8.93364 9.3102 9.2879 8.95801C9.64219 8.60574 9.81914 8.17593 9.81915 7.66992C9.81915 7.16392 9.64309 6.73319 9.29083 6.37891C8.93857 6.02468 8.50873 5.84766 8.00275 5.84766Z" fill="currentColor"/></svg>`,
+  visibilityOff: `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.58954 1.78516C1.72918 1.78516 1.8505 1.83615 1.95282 1.93848L13.9011 13.8877C13.9921 13.9787 14.0365 14.0882 14.0339 14.2168C14.0319 14.3134 14.0062 14.4014 13.9567 14.4814L13.8991 14.5596H13.8981C13.8082 14.6722 13.6943 14.7285 13.5554 14.7285C13.4508 14.7284 13.3567 14.6999 13.2731 14.6426L13.1931 14.5752L10.8317 12.2598L10.8239 12.252L10.8141 12.2559C10.357 12.4274 9.89352 12.5517 9.42352 12.6279C8.95321 12.7042 8.47834 12.7422 7.99969 12.7422C6.47884 12.7422 5.09371 12.3192 3.84442 11.4727C2.59448 10.6258 1.6026 9.52973 0.867859 8.18555C0.821295 8.09813 0.788062 8.01449 0.769226 7.93457C0.750272 7.85465 0.740906 7.7653 0.740906 7.66699C0.740925 7.56914 0.753652 7.47904 0.778015 7.39648C0.80255 7.31298 0.832198 7.22858 0.867859 7.14355C1.13137 6.61926 1.43629 6.12562 1.78192 5.66211C2.12759 5.19867 2.51651 4.77259 2.94891 4.38477L2.96161 4.37305L2.94989 4.36035L1.23114 2.64258C1.12895 2.54169 1.08059 2.425 1.08466 2.29199C1.08876 2.15827 1.13615 2.04064 1.22723 1.93848C1.32949 1.83622 1.45001 1.78522 1.58954 1.78516ZM3.67743 5.11914C3.23222 5.44214 2.84023 5.81807 2.50165 6.24707C2.16298 6.67632 1.89265 7.14731 1.69208 7.66016L1.68524 7.6582L1.69305 7.67383C2.27252 8.92119 3.14335 9.90142 4.30536 10.6143C5.46715 11.327 6.74336 11.6836 8.13348 11.6836C8.44789 11.6836 8.76108 11.6771 9.07294 11.6631C9.3869 11.649 9.68673 11.5683 9.97235 11.4229L9.99286 11.4131L8.90204 10.3223L8.8913 10.3262C8.74514 10.3896 8.59709 10.4315 8.44696 10.4521C8.29579 10.4729 8.14646 10.4834 7.99969 10.4834C7.21543 10.4833 6.5503 10.2106 6.0036 9.66406C5.45678 9.11724 5.18329 8.45153 5.18329 7.66699C5.18329 7.52045 5.19545 7.37166 5.2204 7.2207C5.24534 7.06992 5.28281 6.92103 5.3327 6.77441L5.33661 6.76465L5.3288 6.75684L3.69989 5.12012L3.68915 5.11035L3.67743 5.11914ZM8.08368 2.5918C9.61503 2.59187 11.0114 3.01504 12.2722 3.86133C13.5332 4.70776 14.5003 5.82173 15.1735 7.20215C15.209 7.27536 15.2382 7.35092 15.2614 7.42871C15.2845 7.50608 15.2965 7.58567 15.2966 7.66699C15.2966 7.74875 15.2876 7.82922 15.2712 7.9082C15.263 7.94748 15.2528 7.98617 15.2399 8.02344L15.194 8.13281C14.9416 8.66556 14.6414 9.1581 14.2946 9.61035C13.9478 10.0624 13.5489 10.4805 13.0964 10.8633H13.0954C12.991 10.9622 12.8752 10.998 12.7468 10.9727C12.6165 10.947 12.5084 10.8823 12.4225 10.7773C12.3369 10.6728 12.3024 10.5555 12.3171 10.4248C12.3319 10.2939 12.391 10.1799 12.4958 10.083C12.8832 9.75435 13.2333 9.39178 13.5456 8.99609C13.8582 8.59992 14.1068 8.15838 14.2936 7.67285L14.3015 7.67578L14.2946 7.66016C13.7432 6.4489 12.9174 5.47792 11.8181 4.74707C10.7186 4.01613 9.50147 3.6504 8.16669 3.65039C7.8265 3.65039 7.48688 3.66619 7.14813 3.69824C6.80864 3.73036 6.47574 3.79791 6.15009 3.90137C6.0035 3.94187 5.86054 3.93255 5.7204 3.87207C5.58014 3.81147 5.48195 3.71414 5.42548 3.58008L5.39325 3.48145C5.37165 3.38332 5.38324 3.28509 5.42938 3.18652C5.4911 3.05475 5.58766 2.96772 5.71844 2.9248C6.09557 2.80567 6.48199 2.72035 6.87762 2.66895C7.27379 2.61748 7.67627 2.5918 8.08368 2.5918ZM7.54169 4.9082C7.97621 4.8273 8.41763 4.86032 8.86493 5.00684C9.31226 5.15342 9.6865 5.37729 9.98798 5.67871C10.2816 5.97235 10.5025 6.33883 10.6491 6.77832C10.7773 7.16267 10.8191 7.54325 10.7751 7.91992L10.7507 8.08105V8.08398C10.7506 8.23848 10.7004 8.3651 10.6003 8.46484C10.4999 8.5648 10.3728 8.61523 10.2184 8.61523C10.0644 8.61519 9.9383 8.56455 9.83856 8.46484C9.73913 8.3653 9.68844 8.23907 9.68817 8.08496C9.80221 7.74583 9.81825 7.42359 9.73505 7.11816C9.65184 6.81226 9.50012 6.55331 9.27997 6.3418H9.28094C9.06924 6.1216 8.80715 5.97321 8.49579 5.89551C8.18465 5.81797 7.86441 5.83711 7.53583 5.9541C7.38688 5.95345 7.2635 5.90438 7.16473 5.80566C7.06529 5.70611 7.01532 5.58122 7.01532 5.43066C7.01536 5.31774 7.04328 5.21947 7.0993 5.13574L7.16473 5.05762C7.26416 4.95851 7.38843 4.90821 7.53876 4.9082H7.54169Z" fill="currentColor"/></svg>`,
+};
+
+/* Member directory — used by the assignee dropdown */
+const MEMBERS = [
+  { id: 'unassigned', name: 'Unassigned',     email: null,                         color: null,                       initials: '' },
+  { id: 'ip',         name: 'Igor Pancaldi',  email: 'igor.pancaldi@disguise.one',  color: 'var(--avatar-purple)',     initials: 'IP' },
+  { id: 'sj',         name: 'Sarah Johnson',  email: 'sarah.johnson@disguise.one',  color: 'var(--avatar-blue)',       initials: 'SJ' },
+  { id: 'aa',         name: 'Arun Aryal',     email: 'arun.aryal@disguise.one',     color: 'var(--avatar-peach)',      initials: 'AA' },
+  { id: 'ed',         name: 'Emma Davies',    email: 'emma.davies@disguise.one',    color: 'var(--avatar-green)',      initials: 'ED' },
+];
+const MEMBER_BY_ID = Object.fromEntries(MEMBERS.map(m => [m.id, m]));
+
+const PRODUCT_CATALOG = {
+  designerPro: {
+    name: 'Designer Pro',
+    unit: 'licenses',
+    unitSingular: 'license',
+    ctaLabel: 'Add License/s',
+    icon:      `<img src="${ICONS.designerPro}" alt="Designer Pro" class="product-img" />`,
+    iconSmall: `<img src="${ICONS.designerPro}" alt="Designer Pro" class="product-img sm" />`,
+  },
+  designerX1: {
+    name: 'Designer X 1',
+    unit: 'licenses',
+    unitSingular: 'license',
+    ctaLabel: 'Add License/s',
+    icon:      `<img src="${ICONS.designerX1}" alt="Designer X1" class="product-img" />`,
+    iconSmall: `<img src="${ICONS.designerX1}" alt="Designer X1" class="product-img sm" />`,
+  },
+  designerX2: {
+    name: 'Designer Starter',
+    unit: 'licenses',
+    unitSingular: 'license',
+    ctaLabel: 'Add License/s',
+    icon:      `<img src="${ICONS.designerX2}" alt="Designer Starter" class="product-img" />`,
+    iconSmall: `<img src="${ICONS.designerX2}" alt="Designer Starter" class="product-img sm" />`,
+  },
+  mappingMatter: {
+    name: 'Mapping Matter',
+    unit: 'Seats',
+    unitSingular: 'Seat',
+    ctaLabel: 'Add Seat/s',
+    icon:      `<img src="${ICONS.mappingMatter}" alt="Mapping Matter" class="product-img" />`,
+    iconSmall: `<img src="${ICONS.mappingMatter}" alt="Mapping Matter" class="product-img sm" />`,
+  },
+  renderStream: {
+    name: 'RenderStream',
+    unit: 'licenses',
+    unitSingular: 'license',
+    ctaLabel: 'Add License/s',
+    icon:      `<img src="${ICONS.renderStream}" alt="RenderStream" class="product-img" />`,
+    iconSmall: `<img src="${ICONS.renderStream}" alt="RenderStream" class="product-img sm" />`,
+  },
+};
+
+/* Default key for display */
+const LICENSE_KEY_SAMPLE = 'LLC-f7ea8112-as65ds93-dhf45gs9';
+
+/* State */
+let uid = 1;
+const nextId = (p='id') => `${p}_${uid++}`;
+
+const state = {
+  editMode: false,
+  autoRenew: true,            // default state shown in view mode
+  initialAutoRenew: true,     // snapshot taken when entering edit mode
+  subscriptionName: 'Editable Subs Name',
+  menuOpen: false,
+  productDropdownOpen: false,
+  openAssigneeId: null,       // license id whose assignee dropdown is open
+  pendingListOpen: true,
+  panelRenewOpen: false,      // side-panel auto-renew dropdown
+  products: [
+    {
+      id: 'p_mm', productKey: 'mappingMatter', expanded: false,
+      licenses: [
+        { id: nextId('l'), label: '', key: null, seat: true, days: 180, assigneeId: 'unassigned' },
+        { id: nextId('l'), label: '', key: null, seat: true, days: 180, assigneeId: 'unassigned' },
+      ],
+      existing: true,
+    },
+    {
+      id: 'p_dp', productKey: 'designerPro', expanded: false,
+      licenses: [
+        { id: nextId('l'), label: '', key: LICENSE_KEY_SAMPLE, days: 180, assigneeId: 'unassigned' },
+        { id: nextId('l'), label: '', key: LICENSE_KEY_SAMPLE, days: 180, assigneeId: 'unassigned' },
+        { id: nextId('l'), label: '', key: LICENSE_KEY_SAMPLE, days: 180, assigneeId: 'unassigned' },
+        { id: nextId('l'), label: '', key: LICENSE_KEY_SAMPLE, days: 180, assigneeId: 'unassigned' },
+      ],
+      existing: true,
+    },
+  ],
+  // edit-time drafts
+  addToLicenseCounter: {},     // productId -> number to add on click
+  pendingEditChanges: [],      // transient during edit mode
+  confirmedPending: [],        // starts empty — only fills after Update is confirmed
+};
+
+/* ============ DOM ============ */
+const $ = (id) => document.getElementById(id);
+const mainSub = $('mainSubscription');
+
+/* ============ RENDER ============ */
+function render() {
+  // edit mode styling
+  mainSub.classList.toggle('edit-mode', state.editMode);
+
+  // Subscription name: div in view mode, input in edit mode
+  const wrap = $('subscriptionNameWrap');
+  if (wrap) {
+    if (state.editMode) {
+      // Only re-create the input if it isn't already there (prevents cursor reset on every render)
+      if (!wrap.querySelector('input.subscription-name')) {
+        wrap.innerHTML = `<input
+          class="subscription-name"
+          id="subscriptionName"
+          type="text"
+          value="${state.subscriptionName.replace(/"/g, '&quot;')}"
+          placeholder="Subscription name"
+          autocomplete="off"
+          spellcheck="false"
+        />`;
+        const inp = wrap.querySelector('input.subscription-name');
+        // Click → select all so user can immediately type a replacement
+        inp.addEventListener('click', function onFirstClick() {
+          inp.select();
+          inp.removeEventListener('click', onFirstClick);
+        });
+        // Live update state (no DOM writes → no cursor jumps)
+        inp.addEventListener('input', () => {
+          state.subscriptionName = inp.value;
+          // Sync the side-panel header name directly (avoid full render to preserve caret)
+          const panelNameEl = document.getElementById('panelName');
+          if (panelNameEl) panelNameEl.textContent = inp.value || 'Editable Subs Name';
+        });
+        // Enter commits (blur), Escape reverts
+        inp.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter')  { ev.preventDefault(); inp.blur(); }
+          if (ev.key === 'Escape') {
+            state.subscriptionName = state.editBaseline?.subscriptionName || state.subscriptionName;
+            inp.value = state.subscriptionName;
+            inp.blur();
+          }
+        });
+      }
+    } else {
+      // View mode — plain div
+      wrap.innerHTML = `<div class="subscription-name" id="subscriptionName">${state.subscriptionName}</div>`;
+    }
+  }
+
+  // auto-renew cell (icon vs toggle + label)
+  const arCell = $('autoRenewCell');
+  if (state.editMode) {
+    arCell.innerHTML = `
+      <div class="auto-renew-edit-cell">
+        <div class="toggle ${state.autoRenew ? 'on' : ''}" id="autoRenewToggle" title="${state.autoRenew ? 'Auto-renew on' : 'Auto-renew off'}"></div>
+        <span class="auto-renew-label">Enable / Disable<br>Auto-Renew</span>
+      </div>`;
+    $('autoRenewToggle').addEventListener('click', () => { state.autoRenew = !state.autoRenew; render(); });
+  } else {
+    arCell.innerHTML = `<span class="renew-icon ${state.autoRenew ? '' : 'disabled'}" title="${state.autoRenew ? 'Auto-renew on' : 'Auto-renew off'}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 4v6h-6M4 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10a8 8 0 0 0-14.5-4M4 14a8 8 0 0 0 14.5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>`;
+  }
+
+  // member cell is always empty now — action buttons live in the dedicated edit-action bar
+  $('memberCell').innerHTML = '';
+
+  // Edit action bar (right side) — Discard Changes + Update Subscription
+  const editActionsRight = $('editActionsRight');
+  if (editActionsRight) {
+    if (state.editMode) {
+      editActionsRight.innerHTML = `
+        <button class="btn-discard" id="discardBtn">Discard Changes</button>
+        <button class="btn-danger action-btn" id="updateBtn">
+          Update Subscription
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>`;
+      $('updateBtn').addEventListener('click', openConfirmModal);
+      $('discardBtn').addEventListener('click', discardChanges);
+    } else {
+      editActionsRight.innerHTML = '';
+    }
+  }
+
+  // product dropdown open state
+  $('productDropdown').classList.toggle('open', state.productDropdownOpen);
+  $('menuDropdown').classList.toggle('open', state.menuOpen);
+
+  // Product lists
+  const newlyAddedList = $('newlyAddedList');
+  const existingList = $('existingList');
+  newlyAddedList.innerHTML = '';
+  existingList.innerHTML = '';
+
+  const newlyAdded = state.products.filter(p => !p.existing);
+  const existing = state.products.filter(p => p.existing);
+
+  newlyAdded.forEach(p => newlyAddedList.appendChild(renderProduct(p)));
+  existing.forEach(p => existingList.appendChild(renderProduct(p)));
+
+  // Section titles + divider visibility
+  const hasNew = newlyAdded.length > 0;
+  $('newlyAddedLabel').classList.toggle('has-items', hasNew);
+  $('existingLabel').classList.toggle('has-items', hasNew);
+  $('sectionDivider').classList.toggle('has-newly-added', hasNew);
+  $('existingList').classList.toggle('has-newly-added', hasNew);
+
+  // total licenses
+  const totalLicenses = state.products.reduce((n, p) => n + p.licenses.length, 0);
+  $('totalLicensesLabel').textContent = totalLicenses;
+  $('totalProductsLabel').textContent = state.products.length;
+
+  // Remove All Selected is now rendered per-product inside each license-control bar.
+  // (The legacy global removeSelectedSlot is no longer used.)
+
+  // Pending section
+  renderPending();
+  renderPanel();
+  attachProductListeners();
+}
+
+function renderProduct(p) {
+  const catalog = PRODUCT_CATALOG[p.productKey];
+  const node = document.createElement('div');
+  node.className = 'product' + (p.existing ? '' : ' newly-added') + (p.expanded ? ' open' : '');
+  node.dataset.id = p.id;
+
+  node.innerHTML = `
+    <div class="product-row">
+      <div class="product-checkbox">
+        <div class="checkbox" data-role="product-select" data-id="${p.id}"></div>
+      </div>
+      <button class="chevron-btn ${p.expanded ? 'open' : ''}" data-role="toggle-product" data-id="${p.id}" aria-label="Toggle">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="product-identity">
+        <div class="product-icon">${catalog.icon}</div>
+        <div>
+          <div class="product-name">${catalog.name}</div>
+          <div class="product-count"><strong>${p.licenses.length}</strong> ${catalog.unit}</div>
+        </div>
+      </div>
+      <div><span class="status-dot"></span></div>
+      <div></div>
+      <div>
+        <span class="renew-icon ${state.autoRenew ? '' : 'disabled'}" title="${state.autoRenew ? 'Auto-renew on' : 'Auto-renew off'}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20 4v6h-6M4 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10a8 8 0 0 0-14.5-4M4 14a8 8 0 0 0 14.5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="product-body">
+      <div class="product-body-inner">
+        <div class="license-control">
+          <button class="btn-remove-selected" data-role="remove-selected-in-product" data-id="${p.id}" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Remove All Selected
+          </button>
+          <button class="btn-primary" data-role="add-license" data-id="${p.id}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            ${catalog.ctaLabel}
+          </button>
+        </div>
+        ${p.licenses.map(lic => renderLicenseRow(lic, p)).join('')}
+      </div>
+    </div>
+  `;
+  return node;
+}
+
+function renderLicenseRow(lic, p) {
+  const cat = PRODUCT_CATALOG[p.productKey];
+  const assignee = MEMBER_BY_ID[lic.assigneeId || 'unassigned'];
+  const isAssigned = assignee && assignee.id !== 'unassigned';
+  const isOpen = state.openAssigneeId === lic.id;
+  const isMarked = !!lic.markedForRemoval;
+  const isConfirmed = !!lic.removalConfirmed;
+
+  // Chip content (current assignee)
+  const chipContent = isAssigned
+    ? `<span class="assignee-avatar" style="background:${assignee.color}">${assignee.initials}</span>
+       <span class="assignee-name">${assignee.name}</span>`
+    : `<span class="assignee-avatar unassigned">
+         <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 21v-1a7 7 0 0 1 14 0v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+       </span>
+       <span class="assignee-name">Unassigned</span>`;
+
+  // Dropdown options
+  const optionsHTML = MEMBERS.map(m => {
+    const selected = m.id === (lic.assigneeId || 'unassigned');
+    const avatar = m.id === 'unassigned'
+      ? `<span class="avatar-lg unassigned">
+           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 21v-1a7 7 0 0 1 14 0v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+         </span>`
+      : `<span class="avatar-lg" style="background:${m.color}">${m.initials}</span>`;
+    return `<button class="assignee-option ${selected ? 'selected' : ''}" data-role="pick-assignee" data-lic="${lic.id}" data-member="${m.id}">
+              ${avatar}
+              <span class="name-col">
+                <span class="name">${m.name}</span>
+                ${m.email ? `<span class="email">${m.email}</span>` : ''}
+              </span>
+              <span class="check">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </button>`;
+  }).join('');
+
+  // When marked-for-removal, only the action button changes — everything else
+  // in the row stays fully functional (copy key, toggle visibility, edit label,
+  // reassign) so the user can keep using the license until end of billing cycle.
+  const assigneeCell = `<div class="assignee-wrap">
+         <button class="assignee-chip ${isOpen ? 'open' : ''}" data-role="toggle-assignee" data-id="${lic.id}">
+           ${chipContent}
+           <span class="chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+         </button>
+         <div class="assignee-dropdown ${isOpen ? 'open' : ''}">
+           ${optionsHTML}
+         </div>
+       </div>`;
+
+  const actionCell = isMarked
+    ? `<div class="license-bin-wrap">
+         <button class="license-undo-btn ${isConfirmed ? 'confirmed' : ''}"
+                 data-role="undo-remove-license"
+                 data-id="${lic.id}"
+                 ${isConfirmed ? 'disabled' : ''}
+                 title="${isConfirmed ? 'Scheduled for removal at end of cycle' : 'Undo removal'}"
+                 aria-label="${isConfirmed ? 'Pending removal' : 'Undo removal'}">
+           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+             <path d="M1.1748 1.34277C1.31466 1.34277 1.43513 1.39316 1.53613 1.49512V1.49609L14.3018 14.2607C14.4039 14.3629 14.455 14.4839 14.4551 14.624C14.4551 14.764 14.4035 14.8842 14.3008 14.9854V14.9863C14.1987 15.0886 14.0774 15.1387 13.9375 15.1387C13.7977 15.1386 13.6773 15.0885 13.5762 14.9863V14.9854L12.042 13.4678L12.0322 13.458L12.0205 13.4658C11.4584 13.8728 10.8389 14.1887 10.1621 14.4131C9.48558 14.6373 8.76507 14.749 8.00098 14.749C7.04466 14.749 6.1551 14.5778 5.33301 14.2344C4.51073 13.8908 3.79655 13.4156 3.19043 12.8096C2.58436 12.2035 2.10925 11.4892 1.76562 10.667C1.42212 9.8449 1.25002 8.95535 1.25 7.99902C1.25 7.23495 1.36174 6.5144 1.58594 5.83789C1.81026 5.16117 2.12636 4.54153 2.5332 3.97949L2.54199 3.96777L2.53223 3.95801L0.811523 2.2207C0.709238 2.11842 0.658226 1.9976 0.658203 1.85742C0.658203 1.71737 0.709533 1.59723 0.8125 1.49609V1.49512C0.914377 1.39308 1.03511 1.34285 1.1748 1.34277ZM3.32227 4.77246C3.01283 5.23258 2.77414 5.73476 2.60547 6.27832C2.43675 6.82208 2.35254 7.39604 2.35254 8C2.35258 9.60778 2.89217 10.9511 3.97168 12.0293C5.05132 13.1077 6.39462 13.6475 8 13.6475C8.60066 13.6474 9.17299 13.5632 9.7168 13.3945C10.2607 13.2259 10.7627 12.9862 11.2227 12.6768L11.2402 12.666L11.2256 12.6514L7.04102 8.46387V7.40918H5.98633L3.34766 4.76953L3.33398 4.75586L3.32227 4.77246ZM8 1.24609C8.90113 1.24614 9.76269 1.4159 10.585 1.75488C11.4072 2.0938 12.1379 2.5831 12.7773 3.22266C13.4167 3.86224 13.9063 4.59342 14.2451 5.41602C14.584 6.23853 14.7529 7.09996 14.7529 8C14.7529 8.57462 14.6833 9.1339 14.543 9.67773C14.4377 10.0859 14.2948 10.4824 14.1152 10.8672L13.9238 11.248C13.8566 11.3845 13.751 11.4716 13.6064 11.5088C13.4979 11.5367 13.3915 11.5303 13.2871 11.4902L13.1836 11.4395C13.0469 11.3613 12.9642 11.2461 12.9336 11.0947C12.903 10.9426 12.9196 10.797 12.9844 10.6572C13.1996 10.2467 13.3643 9.81918 13.4775 9.375C13.5909 8.93067 13.6474 8.47206 13.6475 8C13.6475 6.42434 13.0994 5.08855 12.0049 3.99414C10.9106 2.89984 9.57539 2.35263 8 2.35254C7.52787 2.35254 7.06612 2.40912 6.61621 2.52246C6.16665 2.63563 5.73653 2.80505 5.32617 3.03125C5.18862 3.09635 5.04879 3.11364 4.90625 3.08301C4.76422 3.05236 4.64822 2.97414 4.55762 2.84766C4.46733 2.7215 4.43725 2.58677 4.46777 2.44238C4.49064 2.33418 4.54365 2.24828 4.62598 2.18359L4.71777 2.12598L4.71875 2.125C5.22109 1.83334 5.74915 1.61395 6.30273 1.4668C6.85644 1.3195 7.42255 1.24609 8 1.24609ZM5.13086 7.44238H5.97266L6.98633 8.45703H5.13086C4.98775 8.45703 4.86728 8.40904 4.76953 8.3125C4.67191 8.21606 4.62314 8.0945 4.62305 7.94727C4.62305 7.79986 4.67171 7.67943 4.76758 7.58496C4.8634 7.49047 4.98411 7.44238 5.13086 7.44238ZM10.8818 7.44238C11.0173 7.44248 11.1328 7.4935 11.2285 7.59473C11.3243 7.69603 11.372 7.8168 11.3721 7.95801C11.3721 8.08774 11.3311 8.19844 11.25 8.29102C11.1688 8.38368 11.068 8.43901 10.9463 8.45703H10.0176L9.00684 7.44238H10.8818ZM7.00781 7.44238V8.43066L6.01953 7.44238H7.00781Z" fill="currentColor"/>
+           </svg>
+         </button>
+       </div>`
+    : `<div class="license-bin-wrap">
+         <button class="license-bin-btn" data-role="remove-license" data-id="${lic.id}" title="Remove" aria-label="Remove license">
+           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+         </button>
+       </div>`;
+
+  return `
+    <div class="license-row ${isMarked ? 'marked-for-removal' : ''}">
+      <div class="license-checkbox">
+        <div class="checkbox" data-role="license-select" data-id="${lic.id}"></div>
+      </div>
+      <div></div>
+      <div class="license-identity">
+        <div class="license-label">
+          <input placeholder="Label" value="${lic.label || ''}" data-role="label-input" data-id="${lic.id}" />
+          <span class="edit-pencil">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+        ${lic.seat ? `
+          <div class="seat-marker">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 20v-3M18 20v-3M4 17h16M6 14v-4a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            ${cat.name} ${cat.unitSingular}
+          </div>
+        ` : `
+          <div class="license-key-chip">
+            <span class="key-icon">${UI_ICONS.vpnKey}</span>
+            <span class="key-code" data-role="key-code" data-id="${lic.id}">${lic.keyMasked ? '•'.repeat((lic.key || LICENSE_KEY_SAMPLE).length) : (lic.key || LICENSE_KEY_SAMPLE)}</span>
+            <button class="key-action-btn" data-role="copy-key" data-id="${lic.id}" title="Copy license key" aria-label="Copy license key">${UI_ICONS.fileCopy}</button>
+            <button class="key-action-btn" data-role="toggle-key-visibility" data-id="${lic.id}" title="${lic.keyMasked ? 'Show key' : 'Hide key'}" aria-label="${lic.keyMasked ? 'Show key' : 'Hide key'}">${lic.keyMasked ? UI_ICONS.visibility : UI_ICONS.visibilityOff}</button>
+            <span class="copied-tag" data-role="copied-tag-${lic.id}">Copied</span>
+          </div>
+        `}
+      </div>
+      <div class="license-status">${isMarked
+        ? `<span class="status-pill pending license-status-pill">Pending removal</span>`
+        : `<span class="status-dot"></span>`
+      }</div>
+      <div class="license-days-text"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>${lic.days} days</div>
+      <div>
+        <span class="renew-icon ${state.autoRenew ? '' : 'disabled'}" style="width:24px;height:24px;" title="${state.autoRenew ? 'Auto-renew on' : 'Auto-renew off'}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 4v6h-6M4 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10a8 8 0 0 0-14.5-4M4 14a8 8 0 0 0 14.5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
+      ${assigneeCell}
+      ${actionCell}
+    </div>
+  `;
+}
+
+/* ============ PENDING ============ */
+function renderPending() {
+  const list = $('pendingList');
+  list.innerHTML = '';
+  $('pendingCount').textContent = state.confirmedPending.length;
+  list.classList.toggle('collapsed', !state.pendingListOpen);
+  $('pendingChevron').classList.toggle('closed', !state.pendingListOpen);
+  state.confirmedPending.forEach(cp => list.appendChild(renderPendingItem(cp)));
+}
+
+function renderPendingItem(cp) {
+  const node = document.createElement('div');
+  const isNeutral = cp.type === 'renameSubscription';
+  const addTypes = ['addProduct', 'addLicense', 'enableAutoRenew', 'relabelLicense', 'reassignLicense'];
+  const removeTypes = ['removeProduct', 'removeLicense', 'disableAutoRenew'];
+  const isAdd = addTypes.includes(cp.type);
+  const isRemove = removeTypes.includes(cp.type);
+  const variant = isNeutral ? 'neutral' : (isAdd ? 'add' : 'remove');
+  node.className = 'pending-item ' + variant;
+
+  const cat = cp.productKey ? PRODUCT_CATALOG[cp.productKey] : null;
+  const isLicenseLevel = cp.type === 'addLicense' || cp.type === 'removeLicense';
+
+  // Row 1: product icon OR key icon, then the split headline
+  let prefix = '';
+  if (isLicenseLevel && !cp.isSeat) {
+    // License-key level — show the vpn_key icon rather than the product tile
+    prefix = `<span class="pending-key-icon">${UI_ICONS.vpnKey}</span>`;
+  } else if (cat) {
+    prefix = `<span class="pending-product-icon">${cat.iconSmall}</span>`;
+  }
+
+  // Split the headline: bold subject + softer "will be…" tail
+  let bold = '';
+  let soft = '';
+  if (cp.type === 'addProduct')          { bold = cat.name;                                                              soft = 'will be added at the end of cycle.'; }
+  else if (cp.type === 'removeProduct')  { bold = cat.name;                                                              soft = 'will be removed at the end of cycle.'; }
+  else if (cp.type === 'addLicense')     { bold = `${cat.name} ${cp.isSeat ? cat.unitSingular : 'License key'}`;          soft = 'will be added at the end of cycle.'; }
+  else if (cp.type === 'removeLicense')  { bold = `${cat.name} ${cp.isSeat ? cat.unitSingular : `License key ${cp.keyMask || 'XXXX-XXXX-XXXX-XXXX'}`}`; soft = 'will be removed at the end of cycle.'; }
+  else if (cp.type === 'enableAutoRenew')  { bold = 'Auto-renew';                                                         soft = 'has been enabled.'; }
+  else if (cp.type === 'disableAutoRenew') { bold = 'Auto-renew';                                                         soft = 'has been disabled.'; }
+  else if (cp.type === 'renameSubscription') { bold = 'Subscription';                                                     soft = `renamed to ${cp.to}.`; }
+  else if (cp.type === 'relabelLicense')     { bold = `${cat.name}`;                                                      soft = `license label changed to ${cp.to}.`; }
+  else if (cp.type === 'reassignLicense') {
+    const fromM = MEMBER_BY_ID[cp.fromId]?.name || 'Unassigned';
+    const toM   = MEMBER_BY_ID[cp.toId]?.name   || 'Unassigned';
+    bold = `${cat.name}`; soft = `license reassigned from ${fromM} to ${toM}.`;
+  }
+
+  node.innerHTML = `
+    <div class="pending-body">
+      <div class="row">
+        ${prefix}
+        <div class="pending-headline"><strong>${bold}</strong> <span class="soft">${soft}</span></div>
+      </div>
+      ${ isAdd && cp.showPrompt ? `<div class="pending-note">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Add now for a prorated charge for the rest of the billing cycle.
+      </div>` : '' }
+    </div>
+    <div class="pending-meta">
+      <span class="pending-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        ${cp.date}
+      </span>
+      ${isNeutral ? '' : '<span class="pending-status-pill">Pending Updates</span>'}
+    </div>
+    ${ isAdd && !isNeutral && cp.showPrompt ? `<div class="pending-addnow">
+      <div class="toggle-sm ${cp.addNow ? 'on' : ''}" data-role="addnow" data-id="${cp.id}"></div>
+      <span class="pending-addnow-label">Add Now</span>
+    </div>` : '' }
+  `;
+
+  return node;
+}
+
+/* ============ SIDE PANEL ============ */
+function renderPanel() {
+  // Name (only set if not currently being edited via the table input — the input listener handles live keystrokes)
+  const panelName = $('panelName');
+  if (panelName) {
+    const activeEl = document.activeElement;
+    const isTypingInTableName = activeEl && activeEl.id === 'subscriptionName' && activeEl.tagName === 'INPUT';
+    if (!isTypingInTableName) {
+      panelName.textContent = state.subscriptionName || 'Editable Subs Name';
+    }
+  }
+
+  // Auto-Renew label + dropdown selection
+  const renewLabel = $('panelRenewLabel');
+  if (renewLabel) renewLabel.textContent = state.autoRenew ? 'Enabled' : 'Disabled';
+  const renewTrigger = $('panelRenewTrigger');
+  if (renewTrigger) {
+    renewTrigger.classList.toggle('open', state.panelRenewOpen && state.editMode);
+    renewTrigger.classList.toggle('readonly', !state.editMode);
+  }
+  const renewDropdown = $('panelRenewDropdown');
+  if (renewDropdown) renewDropdown.classList.toggle('open', state.panelRenewOpen && state.editMode);
+  document.querySelectorAll('.panel-renew-option').forEach(o => {
+    const isOn = o.dataset.value === (state.autoRenew ? 'enabled' : 'disabled');
+    o.classList.toggle('selected', isOn);
+  });
+
+  // Edit / Update button — view mode shows pink "Edit Subscription", edit mode shows dark "Update"
+  const editBtn = $('panelEditBtn');
+  const editLabel = $('panelEditBtnLabel');
+  if (editBtn && editLabel) {
+    if (state.editMode) {
+      editBtn.classList.remove('panel-btn-primary');
+      editBtn.classList.add('panel-btn-dark');
+      editLabel.textContent = 'Update';
+      editBtn.querySelector('svg').outerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else {
+      editBtn.classList.remove('panel-btn-dark');
+      editBtn.classList.add('panel-btn-primary');
+      editLabel.textContent = 'Edit Subscription';
+      editBtn.querySelector('svg').outerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    }
+  }
+}
+
+/* ============ INTERACTIONS ============ */
+function attachProductListeners() {
+  // checkboxes
+  document.querySelectorAll('.checkbox').forEach(cb => {
+    cb.onclick = (e) => {
+      e.stopPropagation();
+      cb.classList.toggle('checked');
+      const isChecked = cb.classList.contains('checked');
+
+      // Cascade: ticking the product card checkbox selects all its license checkboxes.
+      // Already-marked rows can be safely re-ticked — handleRemoveSelected no-ops on them.
+      if (cb.dataset.role === 'product-select') {
+        const productCard = cb.closest('.product');
+        if (productCard) {
+          productCard.querySelectorAll('[data-role="license-select"]').forEach(licCb => {
+            licCb.classList.toggle('checked', isChecked);
+          });
+        }
+      }
+
+      // Update the per-product Remove All Selected button's enabled state
+      // for every product card on the page.
+      document.querySelectorAll('.product').forEach(card => {
+        const removeBtn = card.querySelector('[data-role="remove-selected-in-product"]');
+        if (!removeBtn) return;
+        const anySelectedHere = card.querySelectorAll('.checkbox.checked').length > 0;
+        removeBtn.disabled = !anySelectedHere;
+      });
+    };
+  });
+
+  // toggle product card
+  document.querySelectorAll('[data-role="toggle-product"]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const p = state.products.find(p => p.id === id);
+      p.expanded = !p.expanded;
+      render();
+    };
+  });
+
+  // counter controls
+  document.querySelectorAll('[data-role="inc"]').forEach(b => {
+    b.onclick = () => {
+      const id = b.dataset.id;
+      state.addToLicenseCounter[id] = (state.addToLicenseCounter[id] || 1) + 1;
+      render();
+    };
+  });
+  document.querySelectorAll('[data-role="dec"]').forEach(b => {
+    b.onclick = () => {
+      const id = b.dataset.id;
+      const v = state.addToLicenseCounter[id] || 1;
+      if (v > 1) {
+        state.addToLicenseCounter[id] = v - 1;
+        render();
+      }
+    };
+  });
+
+  // add license button
+  document.querySelectorAll('[data-role="add-license"]').forEach(b => {
+    b.onclick = () => {
+      const id = b.dataset.id;
+      const count = state.addToLicenseCounter[id] || 1;
+      const p = state.products.find(p => p.id === id);
+      for (let i = 0; i < count; i++) {
+        p.licenses.push({
+          id: nextId('l'),
+          label: '',
+          key: p.productKey === 'mappingMatter' ? null : LICENSE_KEY_SAMPLE,
+          seat: p.productKey === 'mappingMatter',
+          days: 180,
+          assigneeId: 'unassigned',
+          isNewInEdit: true,
+        });
+      }
+      p.expanded = true;
+      state.addToLicenseCounter[id] = 1;
+      toast(`Added ${count} ${PRODUCT_CATALOG[p.productKey].unit.toLowerCase()}`);
+      render();
+    };
+  });
+
+  // label inputs
+  document.querySelectorAll('[data-role="label-input"]').forEach(i => {
+    i.oninput = (e) => {
+      const id = i.dataset.id;
+      state.products.forEach(p => {
+        const lic = p.licenses.find(l => l.id === id);
+        if (lic) lic.label = e.target.value;
+      });
+    };
+  });
+
+  // addnow toggle in pending
+  document.querySelectorAll('[data-role="addnow"]').forEach(t => {
+    t.onclick = () => {
+      const id = t.dataset.id;
+      const cp = state.confirmedPending.find(c => c.id === id);
+      if (cp) { cp.addNow = !cp.addNow; render(); }
+    };
+  });
+
+  // Assignee chip — open/close dropdown
+  document.querySelectorAll('[data-role="toggle-assignee"]').forEach(b => {
+    b.onclick = (e) => {
+      e.stopPropagation();
+      const id = b.dataset.id;
+      state.openAssigneeId = state.openAssigneeId === id ? null : id;
+      render();
+    };
+  });
+
+  // Assignee option — select member
+  document.querySelectorAll('[data-role="pick-assignee"]').forEach(b => {
+    b.onclick = (e) => {
+      e.stopPropagation();
+      const licId = b.dataset.lic;
+      const memberId = b.dataset.member;
+      state.products.forEach(p => {
+        const lic = p.licenses.find(l => l.id === licId);
+        if (lic) lic.assigneeId = memberId;
+      });
+      state.openAssigneeId = null;
+      const m = MEMBER_BY_ID[memberId];
+      toast(m.id === 'unassigned' ? 'License unassigned' : `Assigned to ${m.name}`);
+      render();
+    };
+  });
+
+  // Hydrate Add Product dropdown images (need to do after elements exist)
+  document.querySelectorAll('#productDropdown img[data-icon]').forEach(img => {
+    const key = img.dataset.icon;
+    if (key && ICONS[key]) img.src = ICONS[key];
+  });
+
+  // Disable dropdown items for products already in the subscription, OR locked products
+  const ownedKeys = new Set(state.products.map(p => p.productKey));
+  document.querySelectorAll('#productDropdown .dropdown-item').forEach(item => {
+    const key = item.dataset.product;
+    const locked = item.dataset.locked === 'true';
+    item.classList.toggle('disabled', locked || ownedKeys.has(key));
+  });
+
+  // The global Remove All Selected button is gone — Remove All Selected is now
+  // per-product, wired below alongside other license-row controls.
+
+  // Bin button on each license row — instant single-license remove
+  document.querySelectorAll('[data-role="remove-license"]').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      removeLicenseById(id);
+    };
+  });
+
+  // Undo button on a marked-for-removal license row — restore to normal state.
+  // No-op when removal has already been confirmed (button rendered as disabled).
+  document.querySelectorAll('[data-role="undo-remove-license"]').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      if (btn.disabled || btn.classList.contains('confirmed')) return;
+      const id = btn.dataset.id;
+      undoMarkLicense(id);
+    };
+  });
+
+  // Per-product Remove All Selected — scoped to a single product card
+  document.querySelectorAll('[data-role="remove-selected-in-product"]').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      if (btn.disabled) return;
+      const id = btn.dataset.id;
+      handleRemoveSelectedInProduct(id);
+    };
+  });
+
+  // Copy license key → clipboard + show "Copied" tag
+  document.querySelectorAll('[data-role="copy-key"]').forEach(btn => {
+    btn.onclick = async (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      let key = null;
+      state.products.forEach(p => {
+        const lic = p.licenses.find(l => l.id === id);
+        if (lic) key = lic.key || LICENSE_KEY_SAMPLE;
+      });
+      if (!key) return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(key);
+        } else {
+          // Fallback for older browsers
+          const ta = document.createElement('textarea');
+          ta.value = key;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        const tag = document.querySelector(`[data-role="copied-tag-${id}"]`);
+        if (tag) {
+          tag.classList.add('show');
+          setTimeout(() => tag.classList.remove('show'), 1800);
+        }
+      } catch (err) {
+        console.error('Copy failed:', err);
+      }
+    };
+  });
+
+  // Toggle license key visibility (mask/unmask)
+  document.querySelectorAll('[data-role="toggle-key-visibility"]').forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      state.products.forEach(p => {
+        const lic = p.licenses.find(l => l.id === id);
+        if (lic) lic.keyMasked = !lic.keyMasked;
+      });
+      render();
+    };
+  });
+}
+
+/* Kebab + menu */
+$('kebabBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  state.menuOpen = !state.menuOpen;
+  render();
+});
+
+$('editSubBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  enterEditMode();
+});
+
+function enterEditMode() {
+  state.editMode = true;
+  state.menuOpen = false;
+  state.initialAutoRenew = state.autoRenew; // snapshot for change detection
+  // Capture baseline for change detection (deep clone)
+  state.editBaseline = {
+    subscriptionName: state.subscriptionName,
+    autoRenew: state.autoRenew,
+    products: JSON.parse(JSON.stringify(state.products)),
+  };
+  // expand all so the user can see the controls
+  state.products.forEach(p => p.expanded = true);
+  render();
+}
+
+/* ============ SIDE PANEL EVENTS ============ */
+// Nav collapse / expand
+$('navToggleBtn').addEventListener('click', () => {
+  document.querySelector('.app-shell').classList.toggle('nav-collapsed');
+});
+
+// Panel "Edit Subscription" / "Update" button — same handler as the kebab and the in-card Update
+$('panelEditBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (state.editMode) {
+    openConfirmModal();
+  } else {
+    enterEditMode();
+  }
+});
+
+// Panel Auto-Renew dropdown — only interactive in edit mode
+$('panelRenewTrigger').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (!state.editMode) return; // view mode is read-only
+  state.panelRenewOpen = !state.panelRenewOpen;
+  render();
+});
+document.querySelectorAll('.panel-renew-option').forEach(opt => {
+  opt.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const want = opt.dataset.value === 'enabled';
+    state.autoRenew = want;
+    state.panelRenewOpen = false;
+    render();
+  });
+});
+
+// Panel close (X) — hides panel AND collapses its grid column
+$('panelCloseBtn').addEventListener('click', () => {
+  $('sidePanel').classList.add('hidden');
+  document.querySelector('.page-grid').classList.add('panel-hidden');
+});
+
+// Update Payment Info — placeholder action
+$('panelPaymentBtn').addEventListener('click', () => {
+  toast('Update Payment Info — coming soon');
+});
+
+
+/* Add Product button and dropdown */
+$('addProductBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  state.productDropdownOpen = !state.productDropdownOpen;
+  render();
+});
+document.querySelectorAll('#productDropdown .dropdown-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.product;
+    addNewProduct(key);
+    state.productDropdownOpen = false;
+    render();
+  });
+});
+
+function addNewProduct(productKey) {
+  const id = nextId('p');
+  const seat = productKey === 'mappingMatter';
+  state.products.unshift({
+    id, productKey,
+    expanded: true,
+    existing: false,
+    licenses: [{
+      id: nextId('l'), label: '',
+      key: seat ? null : LICENSE_KEY_SAMPLE,
+      seat, days: 180, assigneeId: 'unassigned', isNewInEdit: true,
+    }],
+  });
+  state.addToLicenseCounter[id] = 1;
+  toast(`${PRODUCT_CATALOG[productKey].name} added — configure licenses`);
+}
+
+/* Subscription card chevron */
+$('subChevron').addEventListener('click', () => {
+  const container = $('productsContainer');
+  const chev = $('subChevron');
+  chev.classList.toggle('open');
+  container.style.display = chev.classList.contains('open') ? '' : 'none';
+});
+
+/* Helpers for the marked-for-removal flow (v3) ------------------------------ */
+/* Determine the appropriate removal behaviour for a license. ONLY Mapping Matter
+   seats hard-delete on bin — every key-based license (Designer Pro, Designer X1,
+   X2, RenderStream, etc.), whether persisted or newly added during the current
+   edit session, follows the marked-for-removal flow: pink row + "Pending removal"
+   pill + do-not-disturb-off icon, undoable until Update Subscription is confirmed. */
+function shouldHardRemove(lic) {
+  return !!lic.seat;
+}
+
+/* Push a removeLicense entry tied to a license id so we can undo it cleanly. */
+function pushRemoveLicenseEntry(p, lic) {
+  state.pendingEditChanges.push({
+    type: 'removeLicense',
+    licenseId: lic.id,
+    productKey: p.productKey,
+    isSeat: !!lic.seat,
+    keyMask: lic.key ? 'XXXX-XXXX-XXXX-XXXX' : null,
+  });
+}
+
+/* Drop any pendingEditChange entries referencing the given license id. */
+function dropPendingForLicense(licId) {
+  state.pendingEditChanges = state.pendingEditChanges.filter(
+    c => c.licenseId !== licId
+  );
+}
+
+/* After mutating the product list, drop any product card that has no real
+   licenses left — either because every seat was hard-removed (Mapping Matter
+   / new-in-edit) or because every key license has been marked for removal.
+   A product can't exist with zero licenses/seats, so the card disappears and
+   any per-license remove entries are consolidated into a single removeProduct
+   entry in the pending changes log. */
+function collapseEmptyProducts() {
+  const productsToDrop = [];
+  state.products.forEach(p => {
+    const isEmpty = p.licenses.length === 0;
+    const allMarked = p.licenses.length > 0 && p.licenses.every(l => l.markedForRemoval);
+    if (!isEmpty && !allMarked) return;
+
+    productsToDrop.push(p.id);
+
+    // Always drop per-license remove entries tied to this product — whether or
+    // not it's persisted, those entries are now subsumed by the product's removal
+    // (or by the silent disappearance of a never-persisted product).
+    state.pendingEditChanges = state.pendingEditChanges.filter(
+      c => !(c.type === 'removeLicense' && c.productKey === p.productKey)
+    );
+
+    // Only log a removeProduct entry for previously-existing (persisted) products.
+    // A newly-added product that ends up empty was added-and-removed in the same
+    // session — it should disappear silently with no pending entry.
+    if (!p.existing) return;
+
+    // Avoid duplicate removeProduct entries
+    const alreadyHas = state.pendingEditChanges.some(
+      c => c.type === 'removeProduct' && c.productKey === p.productKey
+    );
+    if (!alreadyHas) {
+      state.pendingEditChanges.push({ type: 'removeProduct', productKey: p.productKey });
+    }
+  });
+  state.products = state.products.filter(p => !productsToDrop.includes(p.id));
+}
+
+/* Remove a single license by id — hard-delete or mark-for-removal as
+   appropriate. Existing key licenses become marked; everything else is
+   spliced out. */
+function removeLicenseById(licId) {
+  let acted = false;
+  state.products.forEach(p => {
+    p.licenses = p.licenses.filter(lic => {
+      if (lic.id !== licId) return true;
+      acted = true;
+      if (shouldHardRemove(lic)) {
+        // Hard-delete: log a removeLicense entry only for persisted (non-new) licenses.
+        if (!lic.isNewInEdit) pushRemoveLicenseEntry(p, lic);
+        return false;
+      }
+      // Mark-for-removal: keep the license in the array, flip the flag,
+      // ensure exactly one pending entry exists for it.
+      lic.markedForRemoval = true;
+      // Clear any selection state so it doesn't keep contributing to "Remove Selected"
+      dropPendingForLicense(lic.id);
+      pushRemoveLicenseEntry(p, lic);
+      return true;
+    });
+  });
+  if (!acted) return;
+  collapseEmptyProducts();
+  toast('License scheduled for removal at end of cycle');
+  render();
+}
+
+/* Restore a marked-for-removal license back to its normal state. */
+function undoMarkLicense(licId) {
+  let restored = false;
+  state.products.forEach(p => {
+    p.licenses.forEach(lic => {
+      if (lic.id === licId && lic.markedForRemoval) {
+        lic.markedForRemoval = false;
+        dropPendingForLicense(licId);
+        restored = true;
+      }
+    });
+  });
+  if (!restored) return;
+  toast('Removal undone');
+  render();
+}
+
+/* Remove selected — callable from rebound button. Now respects the
+   hard-delete vs mark-for-removal split. */
+function handleRemoveSelected() {
+  const selectedProducts = [...document.querySelectorAll('[data-role="product-select"].checked')].map(e => e.dataset.id);
+  const selectedLicenses = [...document.querySelectorAll('[data-role="license-select"].checked')].map(e => e.dataset.id);
+  if (selectedProducts.length === 0 && selectedLicenses.length === 0) return;
+
+  // Step 1: handle fully-selected product cards.
+  // - Mapping Matter (or new-in-edit) products → hard-remove (drop the card).
+  // - Other products → mark all their key licenses for removal, keep the card visible.
+  const productsToDrop = [];
+  state.products.forEach(p => {
+    if (!selectedProducts.includes(p.id)) return;
+    const allHardRemovable = p.licenses.every(shouldHardRemove);
+    if (allHardRemovable) {
+      // Drop card entirely
+      if (p.existing) {
+        state.pendingEditChanges = state.pendingEditChanges.filter(
+          c => !(c.type === 'removeLicense' && c.productKey === p.productKey)
+        );
+        state.pendingEditChanges.push({ type: 'removeProduct', productKey: p.productKey });
+      }
+      productsToDrop.push(p.id);
+    } else {
+      // Mark each non-hard-removable license; hard-remove the rest within the card
+      p.licenses = p.licenses.filter(lic => {
+        if (shouldHardRemove(lic)) {
+          if (!lic.isNewInEdit) pushRemoveLicenseEntry(p, lic);
+          return false;
+        }
+        if (!lic.markedForRemoval) {
+          lic.markedForRemoval = true;
+          dropPendingForLicense(lic.id);
+          pushRemoveLicenseEntry(p, lic);
+        }
+        return true;
+      });
+    }
+  });
+  state.products = state.products.filter(p => !productsToDrop.includes(p.id));
+
+  // Step 2: handle individually-selected licenses within the remaining products.
+  state.products.forEach(p => {
+    p.licenses = p.licenses.filter(lic => {
+      if (!selectedLicenses.includes(lic.id)) return true;
+      if (shouldHardRemove(lic)) {
+        if (!lic.isNewInEdit) pushRemoveLicenseEntry(p, lic);
+        return false;
+      }
+      if (!lic.markedForRemoval) {
+        lic.markedForRemoval = true;
+        dropPendingForLicense(lic.id);
+        pushRemoveLicenseEntry(p, lic);
+      }
+      return true;
+    });
+  });
+
+  collapseEmptyProducts();
+  toast('Removed selected items');
+  render();
+}
+
+/* Per-product Remove All Selected — scoped to a single product card.
+   Reads the checked checkboxes within that product only. */
+function handleRemoveSelectedInProduct(productId) {
+  const productCard = document.querySelector(`.product[data-id="${productId}"]`);
+  if (!productCard) return;
+  const selectedLicIds = [...productCard.querySelectorAll('[data-role="license-select"].checked')]
+    .map(e => e.dataset.id);
+  if (selectedLicIds.length === 0) return;
+
+  const p = state.products.find(p => p.id === productId);
+  if (!p) return;
+
+  p.licenses = p.licenses.filter(lic => {
+    if (!selectedLicIds.includes(lic.id)) return true;
+    if (shouldHardRemove(lic)) {
+      if (!lic.isNewInEdit) pushRemoveLicenseEntry(p, lic);
+      return false;
+    }
+    if (!lic.markedForRemoval) {
+      lic.markedForRemoval = true;
+      dropPendingForLicense(lic.id);
+      pushRemoveLicenseEntry(p, lic);
+    }
+    return true;
+  });
+
+  // Drop the card if it has no licenses left or if every remaining license
+  // is now marked-for-removal — empty/fully-marked products can't exist.
+  collapseEmptyProducts();
+
+  toast('Selected licenses scheduled for removal');
+  render();
+}
+
+/* Discard Changes — abandon the current edit-mode session and restore the
+   subscription to the snapshot taken when edit mode was entered. */
+function discardChanges() {
+  if (!state.editBaseline) {
+    state.editMode = false;
+    render();
+    return;
+  }
+  state.subscriptionName = state.editBaseline.subscriptionName;
+  state.autoRenew = state.editBaseline.autoRenew;
+  // Deep-clone the baseline products back into state — drops any markedForRemoval flags,
+  // newly-added products, and inline edits made during this edit session.
+  state.products = JSON.parse(JSON.stringify(state.editBaseline.products));
+  state.editMode = false;
+  state.initialAutoRenew = state.autoRenew;
+  state.pendingEditChanges = [];
+  state.addToLicenseCounter = {};
+  state.openAssigneeId = null;
+  state.editBaseline = null;
+  toast('Changes discarded');
+  render();
+}
+
+/* Close menus on body click */
+document.addEventListener('click', (e) => {
+  // Re-open the side panel when user clicks anywhere on a subscription card
+  const panel = $('sidePanel');
+  if (panel && panel.classList.contains('hidden') && e.target.closest('.subscription')) {
+    panel.classList.remove('hidden');
+    document.querySelector('.page-grid').classList.remove('panel-hidden');
+  }
+
+  if (state.menuOpen && !e.target.closest('#menuDropdown') && !e.target.closest('#kebabBtn')) {
+    state.menuOpen = false;
+    render();
+  }
+  if (state.productDropdownOpen && !e.target.closest('#productDropdown') && !e.target.closest('#addProductBtn')) {
+    state.productDropdownOpen = false;
+    render();
+  }
+  if (state.openAssigneeId &&
+      !e.target.closest('.assignee-dropdown') &&
+      !e.target.closest('[data-role="toggle-assignee"]')) {
+    state.openAssigneeId = null;
+    render();
+  }
+  if (state.panelRenewOpen &&
+      !e.target.closest('#panelRenewDropdown') &&
+      !e.target.closest('#panelRenewTrigger')) {
+    state.panelRenewOpen = false;
+    render();
+  }
+});
+
+/* Pending accordion */
+$('pendingHeader').addEventListener('click', () => {
+  state.pendingListOpen = !state.pendingListOpen;
+  render();
+});
+
+/* ============ CONFIRM MODAL ============ */
+function computeChangeList() {
+  const changes = [];
+  const baseline = state.editBaseline || {};
+
+  // auto-renew diff vs snapshot
+  if (state.autoRenew !== state.initialAutoRenew) {
+    changes.push({ type: state.autoRenew ? 'enableAutoRenew' : 'disableAutoRenew' });
+  }
+
+  // subscription name change
+  if (baseline.subscriptionName && state.subscriptionName !== baseline.subscriptionName) {
+    changes.push({
+      type: 'renameSubscription',
+      from: baseline.subscriptionName,
+      to: state.subscriptionName,
+    });
+  }
+
+  // Build a quick lookup of baseline licenses by id
+  const baselineLicenseById = {};
+  (baseline.products || []).forEach(bp => {
+    bp.licenses.forEach(bl => { baselineLicenseById[bl.id] = { productKey: bp.productKey, lic: bl }; });
+  });
+
+  // products removed
+  state.pendingEditChanges.filter(c => c.type === 'removeProduct').forEach(c => {
+    changes.push({ type: 'removeProduct', productKey: c.productKey });
+  });
+  // licenses removed
+  state.pendingEditChanges.filter(c => c.type === 'removeLicense').forEach(c => {
+    changes.push({ type: 'removeLicense', productKey: c.productKey, keyMask: c.keyMask, isSeat: c.isSeat });
+  });
+
+  // newly added products
+  state.products.filter(p => !p.existing).forEach(p => {
+    changes.push({ type: 'addProduct', productKey: p.productKey });
+    p.licenses.forEach((lic, idx) => {
+      if (idx > 0) changes.push({ type: 'addLicense', productKey: p.productKey });
+    });
+  });
+
+  // licenses added / modified on existing products
+  state.products.filter(p => p.existing).forEach(p => {
+    p.licenses.forEach(lic => {
+      if (lic.isNewInEdit) {
+        changes.push({ type: 'addLicense', productKey: p.productKey });
+        return;
+      }
+      // Marked-for-removal licenses are accounted for in pendingEditChanges above —
+      // don't double-count any label/assignee tweaks made before they were marked.
+      if (lic.markedForRemoval) return;
+      const base = baselineLicenseById[lic.id];
+      if (!base) return;
+      // Label changed
+      if ((lic.label || '') !== (base.lic.label || '')) {
+        changes.push({
+          type: 'relabelLicense',
+          productKey: p.productKey,
+          from: base.lic.label || '—',
+          to: lic.label || '—',
+        });
+      }
+      // Assignee changed
+      const oldAssignee = base.lic.assigneeId || 'unassigned';
+      const newAssignee = lic.assigneeId || 'unassigned';
+      if (oldAssignee !== newAssignee) {
+        changes.push({
+          type: 'reassignLicense',
+          productKey: p.productKey,
+          fromId: oldAssignee,
+          toId: newAssignee,
+        });
+      }
+    });
+  });
+
+  return changes;
+}
+
+function openConfirmModal() {
+  const changes = computeChangeList();
+  const body = $('modalBody');
+  body.innerHTML = '';
+  if (changes.length === 0) {
+    body.innerHTML = `<div class="modal-empty">No changes yet — add or remove something, then try again.</div>`;
+  } else {
+    // Track addnow state per-change (resets each open)
+    if (!state.modalAddNow) state.modalAddNow = {};
+
+    changes.forEach((ch, idx) => {
+      const cat = ch.productKey ? PRODUCT_CATALOG[ch.productKey] : null;
+      const isAutoRenew = ch.type === 'enableAutoRenew' || ch.type === 'disableAutoRenew';
+      const isAddType = ch.type === 'addProduct' || ch.type === 'addLicense';
+      const isRemoveType = ch.type === 'removeProduct' || ch.type === 'removeLicense';
+      const isImmediate = isAutoRenew || ch.type === 'renameSubscription' || ch.type === 'relabelLicense' || ch.type === 'reassignLicense';
+
+      // Variant — rename uses neutral, auto-renew uses add/remove based on state
+      const isRename = ch.type === 'renameSubscription';
+      let variant;
+      if (isRename) variant = 'neutral';
+      else if (ch.type === 'enableAutoRenew') variant = 'add';
+      else if (ch.type === 'disableAutoRenew') variant = 'remove';
+      else if (isRemoveType) variant = 'remove';
+      else variant = 'add';
+      const isNeutralType = isRename;
+
+      // Text copy — cleaner, no "at the end of cycle" redundancy since the badge says it
+      let text = '';
+      if (ch.type === 'addProduct')          text = `<strong>${cat.name}</strong> will be added`;
+      if (ch.type === 'removeProduct')       text = `<strong>${cat.name}</strong> will be removed`;
+      if (ch.type === 'addLicense')          text = `New <strong>${cat.name}</strong> ${ch.isSeat ? cat.unitSingular : 'license key'} will be added`;
+      if (ch.type === 'removeLicense')       text = `<strong>${cat.name}</strong> ${ch.isSeat ? cat.unitSingular : `license key ${ch.keyMask || 'XXXX-XXXX-XXXX-XXXX'}`} will be removed`;
+      if (ch.type === 'enableAutoRenew')     text = `Auto-renew has been <strong>Enabled</strong>`;
+      if (ch.type === 'disableAutoRenew')    text = `Auto-renew has been <strong>Disabled</strong>`;
+      if (ch.type === 'renameSubscription')  text = `Subscription renamed to <strong>${ch.to}</strong>`;
+      if (ch.type === 'relabelLicense')      text = `<strong>${cat.name}</strong> license label set to <em>${ch.to}</em>`;
+      if (ch.type === 'reassignLicense') {
+        const fromM = MEMBER_BY_ID[ch.fromId]?.name || 'Unassigned';
+        const toM   = MEMBER_BY_ID[ch.toId]?.name   || 'Unassigned';
+        text = `<strong>${cat.name}</strong> license reassigned from <em>${fromM}</em> to <em>${toM}</em>`;
+      }
+
+      // Icon per variant
+      let icon = '';
+      if (variant === 'add') {
+        icon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`;
+      } else if (variant === 'remove') {
+        icon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`;
+      } else {
+        icon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/></svg>`;
+      }
+
+      // Right side — badge, plus inline Add Now toggle on add product/license entries
+      let right = '';
+      if (isNeutralType) {
+        // Neutral — no badge, just the icon-band
+      } else if (isAddType) {
+        const on = !!state.modalAddNow[idx];
+        right = `<div class="modal-change-right">
+          <span class="modal-change-badge">End of Cycle</span>
+          <span class="modal-addnow">Add Now <span class="toggle-sm ${on ? 'on' : ''}" data-role="modal-addnow" data-idx="${idx}"></span></span>
+        </div>`;
+      } else {
+        right = `<div class="modal-change-right">
+          <span class="modal-change-badge">${isImmediate ? 'Immediate' : 'End of Cycle'}</span>
+        </div>`;
+      }
+
+      const el = document.createElement('div');
+      el.className = 'modal-change ' + variant;
+      el.innerHTML = `
+        <div class="modal-change-icon">${icon}</div>
+        <div class="modal-change-text">${text}</div>
+        ${right}
+      `;
+      body.appendChild(el);
+    });
+
+    // Wire up the Add Now toggles inside the modal
+    body.querySelectorAll('[data-role="modal-addnow"]').forEach(t => {
+      t.onclick = (e) => {
+        e.stopPropagation();
+        const idx = t.dataset.idx;
+        state.modalAddNow[idx] = !state.modalAddNow[idx];
+        t.classList.toggle('on', state.modalAddNow[idx]);
+      };
+    });
+  }
+  $('modalBackdrop').classList.add('open');
+}
+
+$('modalCancelBtn').addEventListener('click', () => {
+  $('modalBackdrop').classList.remove('open');
+});
+
+$('modalConfirmBtn').addEventListener('click', () => {
+  const changes = computeChangeList();
+  if (changes.length === 0) {
+    $('modalBackdrop').classList.remove('open');
+    return;
+  }
+  const today = new Date();
+  const date = '12/03/2026';
+  changes.forEach((ch, idx) => {
+    state.confirmedPending.push({
+      id: nextId('cp'),
+      type: ch.type,
+      productKey: ch.productKey,
+      keyMask: ch.keyMask,
+      isSeat: ch.isSeat,
+      from: ch.from,
+      to: ch.to,
+      fromId: ch.fromId,
+      toId: ch.toId,
+      date,
+      addNow: !!(state.modalAddNow && state.modalAddNow[idx]),
+      showPrompt: ch.type === 'addProduct' || ch.type === 'addLicense',
+    });
+  });
+  // Clear the modal's Add Now scratch state
+  state.modalAddNow = {};
+
+  // EXIT edit mode + commit
+  // Keep newly-added products and licenses in the list (promote to existing).
+  // Marked-for-removal licenses STAY VISIBLE — we set removalConfirmed=true so
+  // their icon becomes non-clickable. They'll be physically removed at end of cycle.
+  state.products.forEach(p => {
+    p.existing = true;
+    p.expanded = false;
+    p.licenses.forEach(l => {
+      if (l.markedForRemoval) l.removalConfirmed = true;
+      delete l.isNewInEdit;
+    });
+  });
+
+  state.editMode = false;
+  state.initialAutoRenew = state.autoRenew;
+  state.pendingEditChanges = [];
+  state.addToLicenseCounter = {};
+  state.openAssigneeId = null;
+  state.editBaseline = null;
+  $('modalBackdrop').classList.remove('open');
+  toast('Changes applied — see Pending for queued items', 2800);
+  render();
+  // scroll to pending
+  setTimeout(() => {
+    document.querySelector('.pending-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 220);
+});
+
+
+/* Toast helper */
+let toastTimer = null;
+function toast(msg, dur=1600) {
+  const t = $('toast');
+  t.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#6BFFDC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> ${msg}`;
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+/* Initial render */
+render();
+</script>
+
+</body>
+</html>
